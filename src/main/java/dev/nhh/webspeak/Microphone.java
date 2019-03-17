@@ -22,11 +22,6 @@ public enum Microphone {
             true
     );
 
-
-    Microphone() {
-
-    }
-
     public void start() {
         if(started) return;
         try {
@@ -44,8 +39,8 @@ public enum Microphone {
         microphone.drain();
     }
 
-    public void read(byte[] bytes, int off, int length) {
-        microphone.read(bytes, off, length);
+    public void read(int off, int length) {
+        numBytesRead = microphone.read(data, off, length);
     }
 
     public byte[] getData() {

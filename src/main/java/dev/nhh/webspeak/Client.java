@@ -10,6 +10,7 @@ public class Client implements Runnable {
     private boolean running;
 
     public Client(String hostname) {
+        System.out.println("Connecting to " + hostname);
         try {
             address = InetAddress.getByName(hostname);
         } catch (UnknownHostException e) {
@@ -33,7 +34,7 @@ public class Client implements Runnable {
         speakers.start();
 
         while(running) {
-            microphone.read(microphone.getData(), 0, 1024);
+            microphone.read(0, 1024);
             DatagramPacket packet = new DatagramPacket(microphone.getData(), microphone.getNumBytesRead(), address, 4445);
 
             final byte[] buffer = new byte[1024];
