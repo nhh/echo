@@ -1,4 +1,4 @@
-package dev.nhh.webspeak;
+package dev.nhh.echo.audio.speaker;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -13,22 +13,19 @@ public enum Speaker {
     private SourceDataLine speakers;
     private final AudioFormat format = new AudioFormat(16000, 16, 1, true, true);
     private final Info info = new Info(SourceDataLine.class, format);
-    private boolean started = false;
 
-    public void start() {
-        if(started) return;
+    Speaker() {
         try {
             speakers = (SourceDataLine) AudioSystem.getLine(info);
             speakers.open(format);
             speakers.start();
-            started = true;
         } catch (LineUnavailableException e) {
             e.printStackTrace();
         }
     }
 
-    public void write(byte[] bytes, int off, int length) {
-        this.speakers.write(bytes, off, length);
+    public void write(AudioPacket packet) {
+        this.speakers.write(packet.getBytes(), packet.getOffset(), packet.getLength());
     }
 
 }

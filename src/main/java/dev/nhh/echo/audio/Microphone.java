@@ -1,4 +1,4 @@
-package dev.nhh.webspeak;
+package dev.nhh.echo.audio;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -12,7 +12,6 @@ public enum Microphone {
     private TargetDataLine microphone;
     private byte[] data;
     private int numBytesRead;
-    private boolean started = false;
 
     private final AudioFormat format = new AudioFormat(
             16000,
@@ -22,14 +21,12 @@ public enum Microphone {
             true
     );
 
-    public void start() {
-        if(started) return;
+    Microphone() {
         try {
             microphone = AudioSystem.getTargetDataLine(format);
             microphone.open(format);
             data = new byte[microphone.getBufferSize() / 5];
             microphone.start();
-            started = true;
         } catch (LineUnavailableException e) {
             e.printStackTrace();
         }

@@ -1,4 +1,4 @@
-package dev.nhh.webspeak;
+package dev.nhh.echo.server;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

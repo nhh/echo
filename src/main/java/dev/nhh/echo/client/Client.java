@@ -1,4 +1,8 @@
-package dev.nhh.webspeak;
+package dev.nhh.echo.client;
+
+import dev.nhh.echo.audio.speaker.AudioPacket;
+import dev.nhh.echo.audio.Microphone;
+import dev.nhh.echo.audio.speaker.SpeakerQueue;
 
 import java.io.IOException;
 import java.net.*;
@@ -28,10 +32,7 @@ public class Client implements Runnable {
         }
 
         final var microphone = Microphone.INSTANCE;
-        microphone.start();
-
-        final var speakers = Speaker.INSTANCE;
-        speakers.start();
+        final var speakerQueue = SpeakerQueue.INSTANCE.getQueue();
 
         while(running) {
             microphone.read(0, 1024);
@@ -47,7 +48,7 @@ public class Client implements Runnable {
                 e.printStackTrace();
             }
 
-            speakers.write(response.getData(), 0, response.getData().length);
+            speakerQueue.add(new AudioPacket(response.getData(), 0, response.getData().length));
         }
 
     }

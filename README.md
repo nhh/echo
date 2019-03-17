@@ -8,10 +8,16 @@ But the reality shows, that webrtc is not suited yet for what i needed. And i de
 
 So, the main goal of this project is still learning and getting deeper insights of java. Some of the topics i want to cover here:
 
-1. Multithreading
-2. Working with primitives and native interfaces.
+1. Multithreading and IPC
+2. Working with primitives and performance optimized code
 3. "low" level networking (udp, tcp)
 4. Architecture skills
+5. Audio codecs / compression / multiple input lines
+6. Best practises for concurrent code
+    - Enum singletons
+    - Concurrent Linked Queues
 
-Architecture:
+For now i am not using any UI lib, because that is out of scope for now. The goal is to create a reliable sound engine.
 
+
+### Engine

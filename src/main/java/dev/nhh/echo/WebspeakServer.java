@@ -1,4 +1,6 @@
-package dev.nhh.webspeak;
+package dev.nhh.echo;
+
+import dev.nhh.echo.server.Server;
 
 public class WebspeakServer {
 

@@ -11,7 +11,7 @@ task client(type: Jar) {
     manifest {
         attributes 'Implementation-Title': 'Gradle Jar File Example',
                 'Implementation-Version': "1",
-                'Main-Class': 'dev.nhh.webspeak.WebspeakClient'
+                'Main-Class': 'dev.nhh.echo.WebspeakClient'
     }
     baseName = project.name + '-client'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
@@ -22,7 +22,7 @@ task server(type: Jar) {
     manifest {
         attributes 'Implementation-Title': 'Gradle Jar File Example',
                 'Implementation-Version': "1",
-                'Main-Class': 'dev.nhh.webspeak.WebspeakServer'
+                'Main-Class': 'dev.nhh.echo.WebspeakServer'
     }
     baseName = project.name + '-server'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
