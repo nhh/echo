@@ -15,7 +15,12 @@ So, the main goal of this project is still learning and getting deeper insights 
 5. Audio codecs / compression / multiple input lines
 6. Best practises for concurrent code
     - Enum singletons
-    - Concurrent Linked Queues
+    - Concurrent Java packages
+7. Application profiling
+8. Not relying on HTTP as primary transport protocol
+    - https://grpc.io/
+    - https://msgpack.org/
+    - http://rsocket.io/
 
 For now i am not using any UI lib, because that is out of scope for now. The goal is to create a reliable sound engine.
 
