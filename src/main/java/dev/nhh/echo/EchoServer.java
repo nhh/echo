@@ -2,7 +2,7 @@ package dev.nhh.echo;
 
 import dev.nhh.echo.server.Server;
 
-public class WebspeakServer {
+public class EchoServer {
 
     public static void main(String[] args) {
 

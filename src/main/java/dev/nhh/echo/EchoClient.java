@@ -3,13 +3,12 @@ package dev.nhh.echo;
 import dev.nhh.echo.audio.speaker.SpeakerThread;
 import dev.nhh.echo.client.Client;
 
-public class WebspeakClient {
+public class EchoClient {
 
     public static void main(String[] args) {
-
         // Todo Refactor Microphone into MicrophoneQueue and Thread so the client
-        // can poll and sleep if there is no input
-        
+        // can poll and sleep if there is no input // Voice Activation
+
         final var clientThread = new Thread(new Client("localhost"));
         clientThread.setName("Client Thread");
         clientThread.start();
