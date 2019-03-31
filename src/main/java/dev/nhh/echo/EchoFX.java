@@ -1,0 +1,31 @@
+package dev.nhh.echo;
+
+import dev.nhh.echo.util.ThreadScheduler;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+public class EchoFX extends Application {
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("/layout/layout.fxml"));
+
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+
+        stage.setTitle("JavaFX and Gradle");
+        stage.setScene(scene);
+        stage.show();
+
+        stage.setOnCloseRequest(event -> ThreadScheduler.INSTANCE.closeAll());
+
+    }
+
+    public static void main(String[] args) {
+       launch();
+    }
+
+}
