@@ -9,8 +9,8 @@ public class SpeakerThreadWrapper extends ThreadWrapper {
 
     private final Logger logger = Logger.getLogger("SpeakerThreadWrapper");
 
-    public SpeakerThreadWrapper() {
-        super("speakerThreadWrapper", true);
+    public SpeakerThreadWrapper(String name, boolean daemon) {
+        super(name, daemon);
     }
 
     @Override
