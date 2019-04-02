@@ -1,6 +1,6 @@
-package dev.nhh.echo;
+package dev.nhh.echoclient;
 
-import dev.nhh.echo.util.ThreadScheduler;
+import dev.nhh.echoclient.util.ThreadScheduler;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

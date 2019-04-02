@@ -1,6 +1,6 @@
-package dev.nhh.echo.audio.speaker;
+package dev.nhh.echoclient.audio.speaker;
 
-import dev.nhh.echo.util.ThreadWrapper;
+import dev.nhh.echoclient.util.ThreadWrapper;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

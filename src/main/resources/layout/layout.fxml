@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.geometry.Insets?>
 
-<GridPane fx:id="grid" alignment="CENTER" hgap="10.0" vgap="10.0" xmlns:fx="http://javafx.com/fxml" fx:controller="dev.nhh.echo.controller.LayoutController">
+<GridPane fx:id="grid" alignment="CENTER" hgap="10.0" vgap="10.0" xmlns:fx="http://javafx.com/fxml" fx:controller="dev.nhh.echoclient.controller.LayoutController">
     <children>
         <Text strokeType="OUTSIDE" strokeWidth="0.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
             Hallo Welt

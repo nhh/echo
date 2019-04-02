@@ -1,4 +1,4 @@
-package dev.nhh.echo.audio.speaker;
+package dev.nhh.echoclient.audio.speaker;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;

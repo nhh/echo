@@ -1,4 +1,4 @@
-package dev.nhh.echo.audio.speaker;
+package dev.nhh.echoclient.audio.speaker;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;

@@ -1,9 +1,9 @@
-package dev.nhh.echo.client;
+package dev.nhh.echoclient.client;
 
-import dev.nhh.echo.audio.speaker.AudioPacket;
-import dev.nhh.echo.audio.Microphone;
-import dev.nhh.echo.audio.speaker.SpeakerQueue;
-import dev.nhh.echo.util.ThreadWrapper;
+import dev.nhh.echoclient.audio.speaker.AudioPacket;
+import dev.nhh.echoclient.audio.Microphone;
+import dev.nhh.echoclient.audio.speaker.SpeakerQueue;
+import dev.nhh.echoclient.util.ThreadWrapper;
 
 import java.io.IOException;
 import java.net.*;

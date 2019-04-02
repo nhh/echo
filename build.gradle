@@ -13,14 +13,18 @@ javafx {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'dev.nhh.echo.EchoFX'
+        attributes 'Main-Class': 'dev.nhh.echoclient.EchoFX'
     }
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
 
-mainClassName = 'dev.nhh.echo.EchoFX'
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+mainClassName = 'dev.nhh.echoclient.EchoFX'
 
 sourceCompatibility = 11
 targetCompatibility = 11

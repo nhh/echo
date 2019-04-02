@@ -1,8 +1,8 @@
-package dev.nhh.echo.controller;
+package dev.nhh.echoclient.controller;
 
-import dev.nhh.echo.audio.speaker.SpeakerThreadWrapper;
-import dev.nhh.echo.client.ClientThreadWrapper;
-import dev.nhh.echo.util.ThreadScheduler;
+import dev.nhh.echoclient.audio.speaker.SpeakerThreadWrapper;
+import dev.nhh.echoclient.client.ClientThreadWrapper;
+import dev.nhh.echoclient.util.ThreadScheduler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;

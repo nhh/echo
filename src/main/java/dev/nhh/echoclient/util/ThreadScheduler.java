@@ -1,4 +1,4 @@
-package dev.nhh.echo.util;
+package dev.nhh.echoclient.util;
 
 import java.util.concurrent.ConcurrentHashMap;
 
