@@ -6,23 +6,34 @@ public enum ThreadScheduler {
 
     INSTANCE;
 
-    private final ConcurrentHashMap<String, EchoThread> threads = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ThreadWrapper> threads = new ConcurrentHashMap<>();
 
-    public void closeAll() {
+    public void stopAll() {
         this.threads
                 .values()
-                .forEach(EchoThread::stop);
+                .forEach(ThreadWrapper::stop);
     }
 
-    public void start(EchoThread value) {
-        // Check if there is already a reference and stop it.
-        value.start();
-        this.threads.putIfAbsent(value.getName(), value);
+    public void startAll() {
+        this.threads
+                .values()
+                .forEach(ThreadWrapper::start);
+    }
+
+    public void addWrapper(ThreadWrapper wrapper) {
+        this.threads.putIfAbsent(wrapper.getName(), wrapper);
+    }
+
+    public void start(String threadName) {
+        final var wrapper = this.threads.get(threadName);
+        if(wrapper == null) return;
+        wrapper.start();
     }
 
     public void stop(String threadName) {
-        final var thread = this.threads.get(threadName);
-        thread.stop();
+        final var wrapper = this.threads.get(threadName);
+        if(wrapper == null) return;
+        wrapper.stop();
     }
 
 }

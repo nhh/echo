@@ -20,7 +20,7 @@ public class EchoFX extends Application {
         stage.setScene(scene);
         stage.show();
 
-        stage.setOnCloseRequest(event -> ThreadScheduler.INSTANCE.closeAll());
+        stage.setOnCloseRequest(event -> ThreadScheduler.INSTANCE.stopAll());
 
     }
 

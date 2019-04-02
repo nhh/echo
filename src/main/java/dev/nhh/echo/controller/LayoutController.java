@@ -1,7 +1,7 @@
 package dev.nhh.echo.controller;
 
-import dev.nhh.echo.audio.speaker.SpeakerRunnable;
-import dev.nhh.echo.client.Client;
+import dev.nhh.echo.audio.speaker.SpeakerThreadWrapper;
+import dev.nhh.echo.client.ClientThreadWrapper;
 import dev.nhh.echo.util.ThreadScheduler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -9,31 +9,29 @@ import javafx.scene.input.MouseEvent;
 
 public class LayoutController {
 
-    private final Client client = new Client("localhost");
-    private final SpeakerRunnable speakerRunnable = new SpeakerRunnable("speakerRunnable");
-
     @FXML
     private TextField textField;
 
     @FXML
     protected void startMicrophone(MouseEvent event) {
-        ThreadScheduler.INSTANCE.start(client);
+        ThreadScheduler.INSTANCE.addWrapper(new ClientThreadWrapper("localhost"));
+        ThreadScheduler.INSTANCE.start("clientThreadWrapper");
     }
 
     @FXML
     protected void stopMicrophone(MouseEvent event) {
-        ThreadScheduler.INSTANCE.stop("clientThread");
+        ThreadScheduler.INSTANCE.stop("clientThreadWrapper");
     }
-
 
     @FXML
     protected void start(MouseEvent event) {
-        ThreadScheduler.INSTANCE.start(speakerRunnable);
+        ThreadScheduler.INSTANCE.addWrapper(new SpeakerThreadWrapper());
+        ThreadScheduler.INSTANCE.start("speakerThreadWrapper");
     }
 
     @FXML
     protected void stop(MouseEvent event) {
-        ThreadScheduler.INSTANCE.stop("speakerThread");
+        ThreadScheduler.INSTANCE.stop("speakerThreadWrapper");
     }
 
 }

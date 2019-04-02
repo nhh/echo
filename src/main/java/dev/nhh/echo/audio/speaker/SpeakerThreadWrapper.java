@@ -1,16 +1,16 @@
 package dev.nhh.echo.audio.speaker;
 
-import dev.nhh.echo.util.EchoThread;
+import dev.nhh.echo.util.ThreadWrapper;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SpeakerRunnable extends EchoThread {
+public class SpeakerThreadWrapper extends ThreadWrapper {
 
-    private final Logger logger = Logger.getLogger("SpeakerRunnable");
+    private final Logger logger = Logger.getLogger("SpeakerThreadWrapper");
 
-    public SpeakerRunnable(String name) {
-        super(name);
+    public SpeakerThreadWrapper() {
+        super("speakerThreadWrapper", true);
     }
 
     @Override
@@ -20,7 +20,7 @@ public class SpeakerRunnable extends EchoThread {
         final var speaker = Speaker.INSTANCE;
 
         while(this.isRunning.get()) {
-            while(!queue.isEmpty()) {
+            while(!queue.isEmpty() && this.isRunning.get()) {
                 speaker.write(queue.poll());
             }
         }

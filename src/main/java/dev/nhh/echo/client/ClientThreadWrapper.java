@@ -3,21 +3,21 @@ package dev.nhh.echo.client;
 import dev.nhh.echo.audio.speaker.AudioPacket;
 import dev.nhh.echo.audio.Microphone;
 import dev.nhh.echo.audio.speaker.SpeakerQueue;
-import dev.nhh.echo.util.EchoThread;
+import dev.nhh.echo.util.ThreadWrapper;
 
 import java.io.IOException;
 import java.net.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Client extends EchoThread {
+public class ClientThreadWrapper extends ThreadWrapper {
 
     private final Logger logger = Logger.getLogger("ClientThread");
     private DatagramSocket socket;
     private InetAddress address;
 
-    public Client(String hostname) {
-        super("clientThread");
+    public ClientThreadWrapper(String hostname) {
+        super("clientThreadWrapper", true);
         System.out.println("Connecting to " + hostname);
         try {
             address = InetAddress.getByName(hostname);
@@ -40,7 +40,7 @@ public class Client extends EchoThread {
         final var microphone = Microphone.INSTANCE;
         final var speakerQueue = SpeakerQueue.INSTANCE.getQueue();
 
-        while(true) {
+        while(this.isRunning.get()) {
             microphone.read(0, 1024);
             DatagramPacket packet = new DatagramPacket(microphone.getData(), microphone.getNumBytesRead(), address, 4445);
 
