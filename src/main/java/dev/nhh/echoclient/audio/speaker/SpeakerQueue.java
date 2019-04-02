@@ -7,7 +7,7 @@ public enum SpeakerQueue {
 
     INSTANCE;
 
-    private final ConcurrentLinkedQueue<AudioPacket> queue = new ConcurrentLinkedQueue<>();
+    private final Queue<AudioPacket> queue = new ConcurrentLinkedQueue<>();
 
     public void add(byte[] bytes, int off, int length) {
         this.queue.add(new AudioPacket(bytes, off, length));
