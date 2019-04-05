@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class EchoFX extends Application {
@@ -14,9 +15,9 @@ public class EchoFX extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("/layout/layout.fxml"));
 
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/theme/dark.css").toExternalForm());
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/icon.jpg")));
 
-        stage.setTitle("JavaFX and Gradle");
         stage.setScene(scene);
         stage.show();
 
