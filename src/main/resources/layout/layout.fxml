@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.layout.AnchorPane?>
-
-<?import javafx.scene.control.Label?>
-<AnchorPane fx:controller="dev.nhh.echoclient.controller.LayoutController" xmlns:fx="http://javafx.com/fxml">
+<?import javafx.scene.layout.*?>
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity"  prefHeight="720" prefWidth="1280" fx:controller="dev.nhh.echoclient.controller.LayoutController" xmlns:fx="http://javafx.com/fxml" stylesheets="@layout.css">
     <children>
-        <TabPane>
-            <Tab fx:id="tab1" text="tab 1">
-                <fx:include source="/menu/menu.fxml"></fx:include>
-            </Tab>
-            <Tab fx:id="tab2" text="tab 2">
-                <Label text="Hallo Welt"></Label>
-            </Tab>
-        </TabPane>
+
+        <!-- Top Menu -->
+        <fx:include GridPane.rowIndex="0" source="/menu/menu.fxml"></fx:include>
+
+        <!-- Left Pane -->
+        <fx:include GridPane.columnIndex="0" GridPane.rowIndex="1" source="/channel/channel.fxml"></fx:include>
+
+        <!-- Right Pane -->
+        <fx:include GridPane.columnIndex="1" GridPane.rowIndex="1" source="/content/content.fxml"></fx:include>
+
     </children>
-</AnchorPane>
+
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" percentWidth="40.0"/>
+        <ColumnConstraints hgrow="SOMETIMES" percentWidth="60.0"/>
+    </columnConstraints>
+
+    <rowConstraints>
+        <RowConstraints percentHeight="5" vgrow="SOMETIMES" />
+        <RowConstraints percentHeight="95" vgrow="SOMETIMES" />
+    </rowConstraints>
+
+</GridPane>

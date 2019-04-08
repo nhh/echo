@@ -1,3 +1,5 @@
-.button {
-    -fx-font-weight: bold;
+.root {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-traversable: transparent;
 }
