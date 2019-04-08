@@ -16,7 +16,7 @@ public class EchoFX extends Application {
 
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("/theme/dark.css").toExternalForm());
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/icon.jpg")));
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/icon.png")));
 
         stage.setScene(scene);
         stage.show();

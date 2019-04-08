@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+
+<TabPane xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         fx:controller="dev.nhh.echoclient.content.ContentController">
+    <Tab fx:id="chatTab" text="Chat">
+        <fx:include source="../chat/chat.fxml"></fx:include>
+    </Tab>
+
+    <Tab fx:id="tab1" text="tab 1">
+        <Label text="Hallo Welt"></Label>
+    </Tab>
+    <Tab fx:id="tab2" text="tab 2">
+        <Label text="Hallo Welt"></Label>
+    </Tab>
+
+</TabPane>
+
