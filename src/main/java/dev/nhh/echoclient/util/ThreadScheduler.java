@@ -1,39 +1,42 @@
 package dev.nhh.echoclient.util;
 
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public enum ThreadScheduler {
 
     INSTANCE;
 
-    private final ConcurrentHashMap<String, ThreadWrapper> threads = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, Thread> threads = new ConcurrentHashMap<>();
 
     public void stopAll() {
         this.threads
                 .values()
-                .forEach(ThreadWrapper::stop);
+                .forEach(Thread::interrupt);
     }
 
     public void startAll() {
         this.threads
                 .values()
-                .forEach(ThreadWrapper::start);
+                .forEach(Thread::run);
     }
 
-    public void addWrapper(ThreadWrapper wrapper) {
-        this.threads.putIfAbsent(wrapper.getName(), wrapper);
+    public UUID addThread(Thread thread) {
+        var id = UUID.randomUUID();
+        this.threads.putIfAbsent(id, thread);
+        return id;
     }
 
-    public void start(String threadName) {
-        final var wrapper = this.threads.get(threadName);
-        if(wrapper == null) return;
-        wrapper.start();
+    public void start(UUID uuid) {
+        final var thread = this.threads.get(uuid);
+        if(thread.isAlive()) return;
+        thread.run();
     }
 
-    public void stop(String threadName) {
-        final var wrapper = this.threads.get(threadName);
-        if(wrapper == null) return;
-        wrapper.stop();
+    public void stop(UUID uuid) {
+        final var thread = this.threads.get(uuid);
+        if(thread.isInterrupted()) return;
+        thread.interrupt();
     }
 
 }
