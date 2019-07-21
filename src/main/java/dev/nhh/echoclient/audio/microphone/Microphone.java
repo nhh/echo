@@ -4,24 +4,19 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
-public enum Microphone {
-
-    INSTANCE;
+public class Microphone implements Runnable {
 
     private TargetDataLine microphone;
     private byte[] data;
-    private int numBytesRead;
+    private DatagramSocket socket;
 
-    private final AudioFormat format = new AudioFormat(
-            16000,
-            16,
-            1,
-            true,
-            true
-    );
-
-    Microphone() {
+    public Microphone() {
         try {
             microphone = AudioSystem.getTargetDataLine(format);
             microphone.open(format);
@@ -32,19 +27,59 @@ public enum Microphone {
         }
     }
 
+    private final AudioFormat format = new AudioFormat(
+            16000,
+            16,
+            1,
+            true,
+            true
+    );
+
     public void drain() {
         microphone.drain();
     }
 
-    public void read(int off, int length) {
-        numBytesRead = microphone.read(data, off, length);
-    }
+    @Override
+    public void run() {
 
-    public byte[] getData() {
-        return data;
-    }
+        System.out.println("Running microphone");
 
-    public int getNumBytesRead() {
-        return numBytesRead;
+        final InetAddress address;
+
+        try {
+            address = InetAddress.getByName("localhost");
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        try {
+            socket = new DatagramSocket();
+            // Todo maybe remove new variable instantiation?
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        boolean isRunning = true;
+
+        while(isRunning) {
+
+            int numBytesRead = microphone.read(data, 0, 128);
+            final var packet = new DatagramPacket(data, numBytesRead, address, 4445);
+
+            try {
+                socket.send(packet);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if (Thread.interrupted()) {
+                return;
+            }
+
+        }
+
     }
 }
