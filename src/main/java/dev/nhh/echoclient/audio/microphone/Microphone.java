@@ -16,7 +16,10 @@ public class Microphone implements Runnable {
     private byte[] data;
     private DatagramSocket socket;
 
-    public Microphone() {
+    private final AudioFormat format = new AudioFormat(44000, 16, 1, true,true);
+
+    public Microphone(DatagramSocket socket) {
+        this.socket = socket;
         try {
             microphone = AudioSystem.getTargetDataLine(format);
             microphone.open(format);
@@ -27,13 +30,7 @@ public class Microphone implements Runnable {
         }
     }
 
-    private final AudioFormat format = new AudioFormat(
-            16000,
-            16,
-            1,
-            true,
-            true
-    );
+
 
     public void drain() {
         microphone.drain();
@@ -42,31 +39,21 @@ public class Microphone implements Runnable {
     @Override
     public void run() {
 
-        System.out.println("Running microphone");
+        boolean isRunning = true;
 
         final InetAddress address;
 
         try {
-            address = InetAddress.getByName("localhost");
+            address = InetAddress.getByName("116.203.73.169");
         } catch (UnknownHostException e) {
             e.printStackTrace();
             return;
         }
 
-        try {
-            socket = new DatagramSocket();
-            // Todo maybe remove new variable instantiation?
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        boolean isRunning = true;
-
         while(isRunning) {
 
-            int numBytesRead = microphone.read(data, 0, 128);
+            int numBytesRead = microphone.read(data, 0, 512);
+
             final var packet = new DatagramPacket(data, numBytesRead, address, 4445);
 
             try {

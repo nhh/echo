@@ -1,5 +1,6 @@
 package dev.nhh.echoclient;
 
+import dev.nhh.echoclient.network.Connection;
 import dev.nhh.echoclient.util.ThreadScheduler;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -20,6 +21,9 @@ public class EchoFX extends Application {
 
         stage.setScene(scene);
         stage.show();
+
+        var connectionThread = new Thread(new Connection());
+        connectionThread.start();
 
         stage.setOnCloseRequest(event -> ThreadScheduler.INSTANCE.stopAll());
 
