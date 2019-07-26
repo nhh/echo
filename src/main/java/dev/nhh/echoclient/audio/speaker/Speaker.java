@@ -13,12 +13,15 @@ import java.net.SocketException;
 public class Speaker implements Runnable {
 
     private SourceDataLine speakers;
-    private final AudioFormat format = new AudioFormat(16000, 16, 1, true, true);
+
+    private final AudioFormat format = new AudioFormat(44000, 16, 1, true,true);
     private final Info info = new Info(SourceDataLine.class, format);
     private boolean isRunning = true;
+
     private DatagramSocket socket;
 
-    public Speaker() {
+    public Speaker(DatagramSocket socket) {
+        this.socket = socket;
         try {
             speakers = (SourceDataLine) AudioSystem.getLine(info);
             speakers.open(format);
@@ -31,32 +34,28 @@ public class Speaker implements Runnable {
 
     @Override
     public void run() {
-        // Todo fixup closing thread
-
-        try {
-            socket = new DatagramSocket(44455);
-            System.out.println("Listening on 44455");
-        } catch(SocketException e) {
-            e.printStackTrace();
-        }
-
         while(isRunning) {
 
-            final byte[] buffer = new byte[128];
+            final byte[] buffer = new byte[512];
 
             final var request = new DatagramPacket(buffer, buffer.length);
 
             try {
                 socket.receive(request);
-                this.speakers.write(request.getData(), request.getOffset(), request.getLength());
+                new Thread(() -> this.speakers.write(request.getData(), request.getOffset(), request.getLength())).start();
             } catch(IOException e) {
                 e.printStackTrace();
             }
 
             if (Thread.interrupted()) {
-                return;
+                 return;
             }
 
         }
+
+        this.speakers.drain();
+        this.speakers.stop();
+        this.speakers.close();
     }
+
 }
