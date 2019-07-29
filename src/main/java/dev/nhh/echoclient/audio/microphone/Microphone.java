@@ -1,25 +1,32 @@
 package dev.nhh.echoclient.audio.microphone;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.TargetDataLine;
+import javax.sound.sampled.*;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Microphone implements Runnable {
+public enum Microphone {
+    INSTANCE;
 
     private TargetDataLine microphone;
     private byte[] data;
     private DatagramSocket socket;
+    private Thread thread;
+    private AtomicBoolean isRunning = new AtomicBoolean(true);
+    private final AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 16000, 16, 2, 4, 16000,false);
 
-    private final AudioFormat format = new AudioFormat(44000, 16, 1, true,true);
+    public void start(DatagramSocket targetSocket) {
 
-    public Microphone(DatagramSocket socket) {
-        this.socket = socket;
+        if (this.isRunning.get()) {
+            return;
+        }
+
+        this.socket = targetSocket;
+        this.isRunning.set(true);
+
         try {
             microphone = AudioSystem.getTargetDataLine(format);
             microphone.open(format);
@@ -28,18 +35,6 @@ public class Microphone implements Runnable {
         } catch (LineUnavailableException e) {
             e.printStackTrace();
         }
-    }
-
-
-
-    public void drain() {
-        microphone.drain();
-    }
-
-    @Override
-    public void run() {
-
-        boolean isRunning = true;
 
         final InetAddress address;
 
@@ -50,23 +45,40 @@ public class Microphone implements Runnable {
             return;
         }
 
-        while(isRunning) {
 
-            int numBytesRead = microphone.read(data, 0, 512);
 
-            final var packet = new DatagramPacket(data, numBytesRead, address, 4445);
+        this.thread = new Thread(() -> {
+            var stream = new AudioInputStream(microphone);
 
-            try {
-                socket.send(packet);
-            } catch (IOException e) {
-                e.printStackTrace();
+            while(isRunning.get()) {
+
+                try {
+                    int numBytesRead= stream.read(data, 0, 512);
+                    final var packet = new DatagramPacket(data, numBytesRead, address, 4445);
+                    socket.send(packet);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (Thread.interrupted()) {
+                    return;
+                }
+
             }
 
-            if (Thread.interrupted()) {
-                return;
-            }
+            this.microphone.stop();
+            this.microphone.flush();
+            this.microphone.close();
+        });
 
-        }
+        this.thread.start();
 
     }
+
+    public void stop() {
+        if(!this.isRunning.get()) return;
+        this.isRunning.set(false);
+    }
+
+
 }

@@ -9,19 +9,26 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Speaker implements Runnable {
+public enum Speaker {
+    INSTANCE;
 
+    private Thread thread;
     private SourceDataLine speakers;
-
-    private final AudioFormat format = new AudioFormat(44000, 16, 1, true,true);
+    private final AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 16000, 16, 2, 4, 16000,false);
     private final Info info = new Info(SourceDataLine.class, format);
-    private boolean isRunning = true;
-
     private DatagramSocket socket;
+    private AtomicBoolean isRunning = new AtomicBoolean(true);
 
-    public Speaker(DatagramSocket socket) {
+    public void start(DatagramSocket socket) {
+        if (this.isRunning.get()) {
+            return;
+        }
+
         this.socket = socket;
+        this.isRunning.set(true);
+
         try {
             speakers = (SourceDataLine) AudioSystem.getLine(info);
             speakers.open(format);
@@ -29,33 +36,28 @@ public class Speaker implements Runnable {
         } catch (LineUnavailableException e) {
             e.printStackTrace();
         }
+
+        this.thread = new Thread(() -> {
+            while(this.isRunning.get()) {
+                final byte[] buffer = new byte[512];
+                final var request = new DatagramPacket(buffer, 512);
+                try {
+                    this.socket.receive(request);
+                    this.speakers.write(request.getData(), request.getOffset(), request.getLength());
+                } catch(IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            this.speakers.stop();
+            this.speakers.flush();
+            this.speakers.close();
+        });
+        this.thread.start();
     }
 
-
-    @Override
-    public void run() {
-        while(isRunning) {
-
-            final byte[] buffer = new byte[512];
-
-            final var request = new DatagramPacket(buffer, buffer.length);
-
-            try {
-                socket.receive(request);
-                new Thread(() -> this.speakers.write(request.getData(), request.getOffset(), request.getLength())).start();
-            } catch(IOException e) {
-                e.printStackTrace();
-            }
-
-            if (Thread.interrupted()) {
-                 return;
-            }
-
-        }
-
-        this.speakers.drain();
-        this.speakers.stop();
-        this.speakers.close();
+    public void stop() {
+        if(!this.isRunning.get()) return;
+        this.isRunning.set(false);
     }
 
 }

@@ -2,7 +2,6 @@ package dev.nhh.echoclient.network;
 
 import dev.nhh.echoclient.audio.microphone.Microphone;
 import dev.nhh.echoclient.audio.speaker.Speaker;
-import dev.nhh.echoclient.util.ThreadScheduler;
 
 import java.io.IOException;
 import java.net.DatagramSocket;
@@ -11,8 +10,18 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Connection implements Runnable {
+
+    private final URI uri;
+    private final Logger logger = Logger.getLogger(Connection.class.getName());
+
+    public Connection(String url) {
+        this.logger.log(Level.INFO, "Connecting to " + url);
+        this.uri = URI.create(url);
+    }
 
     @Override
     public void run() {
@@ -26,11 +35,15 @@ public class Connection implements Runnable {
             return;
         }
 
-        setupMicrophone(socket);
-        setupSpeakers(socket);
+        connect(socket);
 
+        Microphone.INSTANCE.start(socket);
+        Speaker.INSTANCE.start(socket);
+    }
+
+    private void connect(DatagramSocket socket) {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://116.203.73.169:4567/join"))
+                .uri(uri)
                 .timeout(Duration.ofMinutes(1))
                 .header("Content-Type", "application/json")
                 .header("Port", String.valueOf(socket.getLocalPort()))
@@ -44,23 +57,6 @@ public class Connection implements Runnable {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-
-    }
-
-    private void setupSpeakers(DatagramSocket socket) {
-        var speaker = new Speaker(socket);
-        var t = new Thread(speaker);
-        t.setDaemon(true);
-        t.start();
-        ThreadScheduler.INSTANCE.addThread(t);
-    }
-
-    private void setupMicrophone(DatagramSocket socket) {
-        var mic = new Microphone(socket);
-        var t = new Thread(mic);
-        t.setDaemon(true);
-        t.start();
-        ThreadScheduler.INSTANCE.addThread(t);
     }
 
 }

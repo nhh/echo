@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity"  prefHeight="720" prefWidth="1280" fx:controller="dev.nhh.echoclient.controller.LayoutController" xmlns:fx="http://javafx.com/fxml" stylesheets="@layout.css">
+<GridPane fx:id="grid" alignment="CENTER" hgap="10.0" vgap="10.0" xmlns:fx="http://javafx.com/fxml" fx:controller="dev.nhh.echoclient.controller.LayoutController">
     <children>
         <!-- Top Menu -->
         <fx:include GridPane.rowIndex="0" source="/menu/menu.fxml"></fx:include>
@@ -12,6 +13,17 @@
 
         <!-- Right Pane -->
         <fx:include GridPane.columnIndex="1" GridPane.rowIndex="1" source="/content/content.fxml"></fx:include>
+
+        <Label text="Vorname:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <Label text="Nachname:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <TextField fx:id="textField">http://116.203.73.169:4567</TextField>
+
+        <HBox GridPane.columnIndex="1" GridPane.rowIndex="4">
+            <children>
+                <Button fx:id="startButton" mnemonicParsing="false" text="Connect" onMouseClicked="#start"/>
+                <Button fx:id="stopButton" mnemonicParsing="false" text="Disconnect" onMouseClicked="#stop"/>
+            </children>
+        </HBox>
 
     </children>
 
