@@ -16,7 +16,7 @@ public enum Microphone {
     private DatagramSocket socket;
     private Thread thread;
     private AtomicBoolean isRunning = new AtomicBoolean(true);
-    private final AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 16000, 16, 2, 4, 16000,false);
+    private final AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100,false);
 
     public void start(DatagramSocket targetSocket) {
 
