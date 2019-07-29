@@ -1,7 +1,7 @@
 package dev.nhh.echoclient;
 
-import dev.nhh.echoclient.network.Connection;
-import dev.nhh.echoclient.util.ThreadScheduler;
+import dev.nhh.echoclient.audio.microphone.Microphone;
+import dev.nhh.echoclient.audio.speaker.Speaker;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -22,10 +22,10 @@ public class EchoFX extends Application {
         stage.setScene(scene);
         stage.show();
 
-        var connectionThread = new Thread(new Connection());
-        connectionThread.start();
-
-        stage.setOnCloseRequest(event -> ThreadScheduler.INSTANCE.stopAll());
+        stage.setOnCloseRequest(event -> {
+            Microphone.INSTANCE.stop();
+            Speaker.INSTANCE.stop();
+        });
 
     }
 
