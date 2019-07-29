@@ -16,7 +16,7 @@ public enum Speaker {
 
     private Thread thread;
     private SourceDataLine speakers;
-    private final AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 16000, 16, 2, 4, 16000,false);
+    private final AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100,false);
     private final Info info = new Info(SourceDataLine.class, format);
     private DatagramSocket socket;
     private AtomicBoolean isRunning = new AtomicBoolean(true);
