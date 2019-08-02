@@ -1,7 +1,6 @@
-package dev.nhh.echoclient;
+package dev.nhh.echo.client;
 
-import dev.nhh.echoclient.audio.microphone.Microphone;
-import dev.nhh.echoclient.audio.speaker.Speaker;
+import dev.nhh.echo.client.util.ConnectionList;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,7 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-public class EchoFX extends Application {
+public class Client extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -22,11 +21,7 @@ public class EchoFX extends Application {
         stage.setScene(scene);
         stage.show();
 
-        stage.setOnCloseRequest(event -> {
-            Microphone.INSTANCE.stop();
-            Speaker.INSTANCE.stop();
-        });
-
+        stage.setOnCloseRequest(event -> ConnectionList.INSTANCE.stopAllConnections());
     }
 
     public static void main(String[] args) {
