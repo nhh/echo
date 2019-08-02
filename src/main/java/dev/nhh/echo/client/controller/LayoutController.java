@@ -8,19 +8,4 @@ import javafx.scene.input.MouseEvent;
 
 public class LayoutController {
 
-    @FXML
-    private TextField textField;
-
-    @FXML
-    protected void stop(MouseEvent event) {
-        ConnectionList.INSTANCE.stopAllConnections();
-    }
-
-    @FXML
-    protected void start(MouseEvent event) {
-        var connection = new Connection(textField.getText());
-        connection.start();
-        ConnectionList.INSTANCE.addConnection(connection);
-    }
-
 }

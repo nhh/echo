@@ -9,7 +9,7 @@
 
 <TreeView xmlns="http://javafx.com/javafx"
           xmlns:fx="http://javafx.com/fxml"
-          fx:controller="dev.nhh.echoclient.channel.ChannelController"
+          fx:controller="dev.nhh.echo.client.controller.ChannelController"
           fx:id="server"
           stylesheets="@channel.css">
 </TreeView>

@@ -1,4 +1,4 @@
-package dev.nhh.echoclient.channel;
+package dev.nhh.echo.client.controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

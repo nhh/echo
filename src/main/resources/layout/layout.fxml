@@ -5,6 +5,7 @@
 <?import javafx.scene.layout.*?>
 
 <GridPane fx:id="grid" alignment="CENTER" hgap="10.0" vgap="10.0" xmlns:fx="http://javafx.com/fxml" fx:controller="dev.nhh.echo.client.controller.LayoutController">
+
     <children>
         <!-- Top Menu -->
         <fx:include GridPane.rowIndex="0" source="/menu/menu.fxml"></fx:include>
@@ -15,16 +16,6 @@
         <!-- Right Pane -->
         <fx:include GridPane.columnIndex="1" GridPane.rowIndex="1" source="/content/content.fxml"></fx:include>
 
-        <Label text="Vorname:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-        <Label text="Nachname:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-        <TextField fx:id="textField">116.203.73.169</TextField>
-
-        <HBox GridPane.columnIndex="1" GridPane.rowIndex="4">
-            <children>
-                <Button fx:id="startButton" mnemonicParsing="false" text="Connect" onMouseClicked="#start"/>
-                <Button fx:id="stopButton" mnemonicParsing="false" text="Disconnect" onMouseClicked="#stop"/>
-            </children>
-        </HBox>
 
     </children>
 

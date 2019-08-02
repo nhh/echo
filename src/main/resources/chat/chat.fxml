@@ -6,7 +6,7 @@
 <?import javafx.scene.control.Button?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="dev.nhh.echoclient.chat.ChatController"
+            fx:controller="dev.nhh.echo.client.controller.ChatController"
             stylesheets="@chat.css"
             styleClass="pane"
             fx:id="menu">
