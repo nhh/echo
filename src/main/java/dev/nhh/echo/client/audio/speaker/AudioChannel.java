@@ -19,7 +19,7 @@ public class AudioChannel extends Thread {
         this.channelId = channelId;
 
         AudioFormat af = EchoAudioFormat.EIGHT_BIT_PER_SECOND;
-        DataLine.Info info = new DataLine.Info(TargetDataLine.class, null);
+        DataLine.Info info = new DataLine.Info(SourceDataLine.class, af);
 
         try {
             speaker = (SourceDataLine) AudioSystem.getLine(info);
@@ -45,16 +45,11 @@ public class AudioChannel extends Thread {
         while(this.isRunning.get()) {
             //nothing to play, wait
             if (voicePacketQueue.isEmpty()) {
-                System.out.println("Empty Queue, sleeping");
-                try { Thread.sleep(10); } catch (InterruptedException e) { e.printStackTrace(); }
                 continue;
             }
 
-            System.out.println("Playing voice packages");
-
             VoicePacket vp = this.voicePacketQueue.get(0);
             voicePacketQueue.remove(vp);
-
             this.speaker.write(vp.getData(), 0, vp.getData().length);
         }
 

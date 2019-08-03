@@ -1,5 +1,6 @@
 package dev.nhh.echo.client.audio.microphone;
 
+import dev.nhh.echo.client.Client;
 import dev.nhh.echo.client.dto.VoicePacket;
 import dev.nhh.echo.client.util.EchoAudioFormat;
 
@@ -37,18 +38,19 @@ public class Microphone extends Thread {
         this.isRunning.set(true);
 
         while(isRunning.get()) {
-            if (this.microphone.available() <= 1200) { // We want to only play sound if enough is available - Only play if 1201 is available
-                try { Thread.sleep(10); } catch (InterruptedException e) { e.printStackTrace(); }
+            if (microphone.available() <= 1100) {
                 continue;
             }
-            byte[] buff = new byte[1200];
+
+            byte[] buff = new byte[1100];
             microphone.read(buff, 0, buff.length);
 
-            var p = new VoicePacket(null, null, -1, buff); // Todo apply Gzip compression
+            var p = new VoicePacket(null, Client.CLIENT_ID, System.nanoTime() / 1000000L, buff); // Todo apply Gzip compression
 
             try {
                 this.serverStream.writeObject(p);
             } catch (IOException e) {
+                this.close();
                 e.printStackTrace();
             }
         }

@@ -8,7 +8,6 @@ public class VoicePacket implements Serializable {
 
     private UUID channelId; // Which channel should be broadcast to?
     private UUID userId; // Which audioline the client should assign this packet
-
     private long timestamp, ttl=2000;
 
     private byte[] data; //can carry any type of object. in this program, i used a sound packet, but it could be a string, a chunk of video, ...
@@ -51,6 +50,11 @@ public class VoicePacket implements Serializable {
     public UUID getUserId() {
         return userId;
     }
+
     public void setUserId(UUID id) { this.userId = id; }
+
+    public boolean isAlive() {
+        return this.getTimestamp() + this.getTtl() > System.nanoTime() / 1000000L;
+    }
 
 }

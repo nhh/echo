@@ -55,7 +55,7 @@ public class Connection extends Thread {
         while(this.isRunning.get()) {
             try {
                 if(fromServer.available() == 0) {
-                    try { Thread.sleep(2); } catch (InterruptedException e) { e.printStackTrace(); }
+                    try { Thread.sleep(10); } catch (InterruptedException e) { e.printStackTrace(); }
                 }
 
                 VoicePacket in = (VoicePacket) (fromServer.readObject());
@@ -73,7 +73,7 @@ public class Connection extends Thread {
                     continue;
                 }
 
-                var newChannel = new AudioChannel(UUID.randomUUID());
+                var newChannel = new AudioChannel(in.getChannelId());
                 newChannel.addVoicePacketToQueue(in);
                 newChannel.start();
                 this.audioChannels.add(newChannel);

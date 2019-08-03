@@ -8,7 +8,11 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import java.util.UUID;
+
 public class Client extends Application {
+
+    public static final UUID CLIENT_ID = UUID.randomUUID();
 
     @Override
     public void start(Stage stage) throws Exception {
