@@ -53,13 +53,15 @@ public class AudioChannel extends Thread {
             this.speaker.write(vp.getData(), 0, vp.getData().length);
         }
 
-    }
-
-    public void shutdown() {
-        this.isRunning.set(false);
         this.speaker.stop();
         this.speaker.flush();
         this.speaker.close();
+
+    }
+
+    public void shutdown() {
+        if(!this.isRunning.get()) return;
+        this.isRunning.set(false);
     }
 
     public UUID getChannelId() {

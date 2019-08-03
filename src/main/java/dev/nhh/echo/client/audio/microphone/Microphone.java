@@ -50,19 +50,21 @@ public class Microphone extends Thread {
             try {
                 this.serverStream.writeObject(p);
             } catch (IOException e) {
-                this.close();
+                this.shutdown();
                 e.printStackTrace();
             }
         }
 
-    }
-
-    public void close() {
-        if(!this.isRunning.get()) return;
-        this.isRunning.set(false);
         this.microphone.stop();
         this.microphone.flush();
         this.microphone.close();
+
+    }
+
+    public void shutdown() {
+        if(!this.isRunning.get()) return;
+        this.isRunning.set(false);
+
     }
 
 

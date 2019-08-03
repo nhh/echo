@@ -38,6 +38,7 @@ public class VoicePacket implements Serializable {
     public long getTtl() {
         return ttl;
     }
+
     public void setTtl(long ttl) {
         this.ttl = ttl;
     }

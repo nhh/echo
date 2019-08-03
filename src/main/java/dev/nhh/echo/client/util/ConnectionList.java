@@ -16,7 +16,9 @@ public enum ConnectionList {
     }
 
     public void stopAllConnections() {
+        System.out.println("Stopping all connections...");
         this.connections.forEach(Connection::shutdown);
+        System.out.println("Done...");
     }
 
 }

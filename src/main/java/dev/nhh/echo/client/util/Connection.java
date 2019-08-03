@@ -30,7 +30,7 @@ public class Connection extends Thread {
             var stream = new ObjectOutputStream(socket.getOutputStream());
             stream.writeObject(new HandshakePacket(Client.CLIENT_ID, System.nanoTime() / 1000000L));
             stream.flush();
-            stream.close();
+            //stream.close(); Closing the outputstream
             System.out.println("Handshake done!");
         } catch (IOException e) {
             e.printStackTrace();
@@ -91,12 +91,19 @@ public class Connection extends Thread {
 
         // Close microphone and all AudioChannels
 
-        this.microphone.close();
+        this.microphone.shutdown();
         this.audioChannels.forEach(AudioChannel::shutdown);
+
+        try {
+            this.socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
     public void shutdown() {
+        if(!this.isRunning.get()) return;
         this.isRunning.set(false);
     }
 
