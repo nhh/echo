@@ -27,11 +27,6 @@ public class Connection extends Thread {
     public Connection(String ip) {
         try {
             this.socket = new Socket(ip, 4445);
-            var stream = new ObjectOutputStream(socket.getOutputStream());
-            stream.writeObject(new HandshakePacket(Client.CLIENT_ID, System.nanoTime() / 1000000L));
-            stream.flush();
-            //stream.close(); Closing the outputstream
-            System.out.println("Handshake done!");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -50,7 +45,10 @@ public class Connection extends Thread {
         ObjectInputStream fromServer;
 
         try {
-            this.microphone = new Microphone(new ObjectOutputStream(socket.getOutputStream()));
+            var stream = new ObjectOutputStream(socket.getOutputStream());
+            stream.writeObject(new HandshakePacket(Client.CLIENT_ID, System.nanoTime() / 1000000L));
+            System.out.println("Handshake done!");
+            this.microphone = new Microphone(stream);
             this.microphone.start();
             fromServer = new ObjectInputStream(this.socket.getInputStream());
         } catch (IOException e) {

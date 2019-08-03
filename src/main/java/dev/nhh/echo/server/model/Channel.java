@@ -42,12 +42,17 @@ public class Channel extends Thread {
 
         while(this.isRunning.get()) {
 
-            if(this.packets.isEmpty()) { continue; }
+            if(this.packets.isEmpty()) {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                continue;
+            }
 
             var packet = this.packets.get(0);
             this.packets.remove(0);
-
-            this.clients.forEach(c -> c.send(packet));
 
             this.clients.parallelStream()
                     .filter(c -> c.getUserId() != packet.getUserId())

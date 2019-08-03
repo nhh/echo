@@ -66,12 +66,13 @@ public class ClientConnection extends Thread {
             HandshakePacket hp = (HandshakePacket) in.readObject();
 
             if(hp == null || hp.getUserId() == null) {
+                Thread.sleep(10);
                 return;
             }
 
             this.id = hp.getUserId();
             System.out.println("Received handshake from " + hp.getUserId());
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -82,25 +83,33 @@ public class ClientConnection extends Thread {
             VoicePacket vp = (VoicePacket) in.readObject();
 
             if(vp.getChannelId() != null) {
+                System.out.println("Channel ID is not null, package is invalid!");
+                Thread.sleep(10);
                 return;
             }
 
             if (this.channel == null) {
+                System.out.println("Client Connections has no channel!");
+                Thread.sleep(10);
                 return;
             }
 
             vp.setTimestamp(System.nanoTime() / 1000000L);
             vp.setChannelId(this.channel.getChannelId());
+
             this.channel.broadcast(vp); // Send packet to all clients within channel
 
         } catch (IOException | ClassNotFoundException e) {
             this.isRunning.set(false);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
     private void sendPackage() {
         try {
             if (queue.isEmpty()) {
+                Thread.sleep(10);
                 return;
             }
 
@@ -113,7 +122,7 @@ public class ClientConnection extends Thread {
 
             out.writeObject(packet); //send the message
 
-        } catch(IOException e) {
+        } catch(IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -125,4 +134,5 @@ public class ClientConnection extends Thread {
     public UUID getUserId() {
         return this.id;
     }
+
 }
