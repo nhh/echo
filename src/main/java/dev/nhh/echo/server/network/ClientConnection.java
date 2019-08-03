@@ -54,7 +54,6 @@ public class ClientConnection extends Thread {
                     Thread.sleep(10);
                     continue;
                 }
-
                 vp.setTimestamp(System.nanoTime() / 1000000L);
                 vp.setChannelId(this.channel.getChannelId());
                 this.channel.broadcast(vp); // Send packet to all clients within channel

@@ -12,7 +12,6 @@ public class VoicePacket implements Serializable {
 
     private byte[] data; //can carry any type of object. in this program, i used a sound packet, but it could be a string, a chunk of video, ...
 
-
     public VoicePacket(UUID channelId, UUID userId, long timestamp, byte[] data) {
         this.userId = userId;
         this.channelId = channelId;
