@@ -36,7 +36,6 @@ public class ServerConnection extends Thread {
         this.isRunning.set(true);
 
         while (isRunning.get()) {
-
             try {
                 var clientConnection = socket.accept();
                 System.out.println("Accepting client" + clientConnection.getInetAddress());

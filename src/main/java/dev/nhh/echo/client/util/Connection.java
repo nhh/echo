@@ -1,7 +1,9 @@
 package dev.nhh.echo.client.util;
 
+import dev.nhh.echo.client.Client;
 import dev.nhh.echo.client.audio.microphone.Microphone;
 import dev.nhh.echo.client.audio.speaker.AudioChannel;
+import dev.nhh.echo.client.dto.HandshakePacket;
 import dev.nhh.echo.client.dto.VoicePacket;
 
 import java.io.IOException;
@@ -25,6 +27,11 @@ public class Connection extends Thread {
     public Connection(String ip) {
         try {
             this.socket = new Socket(ip, 4445);
+            var stream = new ObjectOutputStream(socket.getOutputStream());
+            stream.writeObject(new HandshakePacket(Client.CLIENT_ID, System.nanoTime() / 1000000L));
+            stream.flush();
+            stream.close();
+            System.out.println("Handshake done!");
         } catch (IOException e) {
             e.printStackTrace();
         }
