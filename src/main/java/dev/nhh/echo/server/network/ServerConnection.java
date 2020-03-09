@@ -4,6 +4,7 @@ import dev.nhh.echo.server.model.Channel;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -21,7 +22,7 @@ public class ServerConnection extends Thread {
             e.printStackTrace();
         }
 
-        var channel = new Channel(UUID.fromString("cc5a988c-236b-44b9-85fa-99b24290bf03"));
+        Channel channel = new Channel(UUID.fromString("cc5a988c-236b-44b9-85fa-99b24290bf03"));
         channel.start(); // Todo kill me for not starting threads :O
         this.channels.add(channel);
     }
@@ -37,9 +38,9 @@ public class ServerConnection extends Thread {
 
         while (isRunning.get()) {
             try {
-                var clientConnection = socket.accept();
+                Socket clientConnection = socket.accept();
                 System.out.println("Accepting client" + clientConnection.getInetAddress());
-                var connection = new ClientConnection(clientConnection);
+                ClientConnection connection = new ClientConnection(clientConnection);
                 connection.start();
                 this.channels.get(0).addClient(connection);
             } catch (IOException e) {

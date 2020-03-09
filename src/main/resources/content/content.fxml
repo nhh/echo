@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.VBox?>
+
 <TabPane xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml"
          fx:controller="dev.nhh.echo.client.controller.ContentController">
@@ -15,8 +16,10 @@
             <TextField fx:id="textField">116.203.73.169</TextField>
             <Button fx:id="startButton" mnemonicParsing="false" text="Connect" onMouseClicked="#start"/>
             <Button fx:id="stopButton" mnemonicParsing="false" text="Disconnect" onMouseClicked="#stop"/>
-        </VBox>
+            <TextField fx:id="volume"></TextField>
+            <Button fx:id="applyVolume" mnemonicParsing="false" text="Set Volume" onMouseClicked="#applyVolume"/>
 
+        </VBox>
     </Tab>
 
     <Tab fx:id="tab2" text="tab 2">

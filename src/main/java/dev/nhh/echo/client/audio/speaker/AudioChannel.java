@@ -25,6 +25,7 @@ public class AudioChannel extends Thread {
             speaker = (SourceDataLine) AudioSystem.getLine(info);
             speaker.open(af);
             speaker.start();
+            GainControl.INSTANCE.setLine(speaker);
         } catch (LineUnavailableException e) {
             e.printStackTrace();
         }
@@ -67,4 +68,5 @@ public class AudioChannel extends Thread {
     public UUID getChannelId() {
         return channelId;
     }
+
 }

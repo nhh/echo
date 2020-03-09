@@ -36,7 +36,7 @@ public class Connection extends Thread {
     @Override
     public void run() {
 
-        if(this.isRunning.get()){
+        if(this.isRunning.get()) {
             return;
         }
 
@@ -45,7 +45,7 @@ public class Connection extends Thread {
         ObjectInputStream fromServer;
 
         try {
-            var stream = new ObjectOutputStream(socket.getOutputStream());
+            ObjectOutputStream stream = new ObjectOutputStream(socket.getOutputStream());
             stream.writeObject(new HandshakePacket(Client.CLIENT_ID, System.nanoTime() / 1000000L));
             System.out.println("Handshake done!");
             this.microphone = new Microphone(stream);
@@ -77,7 +77,7 @@ public class Connection extends Thread {
                     continue;
                 }
 
-                var newChannel = new AudioChannel(in.getChannelId());
+                AudioChannel newChannel = new AudioChannel(in.getChannelId());
                 newChannel.addVoicePacketToQueue(in);
                 newChannel.start();
                 this.audioChannels.add(newChannel);

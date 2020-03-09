@@ -9,7 +9,6 @@ public class HandshakePacket implements Serializable {
     private UUID userId; // Which audioline the client should assign this packet
     private long timestamp, ttl=2000;
 
-
     public HandshakePacket(UUID userId, long timestamp) {
         this.userId = userId;
         this.timestamp = timestamp;

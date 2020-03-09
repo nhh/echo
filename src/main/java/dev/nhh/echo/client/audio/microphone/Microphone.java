@@ -42,10 +42,10 @@ public class Microphone extends Thread {
                 continue;
             }
 
-            byte[] buff = new byte[1100];
+            byte[] buff = new byte[2200];
             microphone.read(buff, 0, buff.length);
 
-            var p = new VoicePacket(null, Client.CLIENT_ID, System.nanoTime() / 1000000L, buff); // Todo apply Gzip compression
+            VoicePacket p = new VoicePacket(null, Client.CLIENT_ID, System.nanoTime() / 1000000L, buff); // Todo apply Gzip compression
 
             try {
                 this.serverStream.writeObject(p);

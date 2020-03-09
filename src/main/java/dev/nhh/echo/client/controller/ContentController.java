@@ -1,5 +1,7 @@
 package dev.nhh.echo.client.controller;
 
+import com.sun.javafx.scene.control.IntegerField;
+import dev.nhh.echo.client.audio.speaker.GainControl;
 import dev.nhh.echo.client.util.Connection;
 import dev.nhh.echo.client.util.ConnectionList;
 import javafx.fxml.FXML;
@@ -15,11 +17,17 @@ public class ContentController {
     private TextField textField;
 
     @FXML
+    private TextField volume;
+
+    @FXML
     private Button button;
 
     @FXML
-    void click() {
-        button.setText("Hallo Welt" + new Date().toString());
+    private Button applyVolume;
+
+    @FXML
+    protected void applyVolume(MouseEvent event) {
+        GainControl.INSTANCE.setVolume(Float.parseFloat(volume.getText()));
     }
 
     @FXML
@@ -29,7 +37,7 @@ public class ContentController {
 
     @FXML
     protected void start(MouseEvent event) {
-        var connection = new Connection(textField.getText());
+        Connection connection = new Connection(textField.getText());
         connection.start();
         ConnectionList.INSTANCE.addConnection(connection);
     }

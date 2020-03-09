@@ -5,6 +5,7 @@ plugins {
 }
 
 repositories {
+    maven { url 'https://repo.spring.io/release' }
     mavenCentral()
 }
 
@@ -60,6 +61,11 @@ task serverJar(type: Jar) {
     with jar
 }
 
+mainClassName = 'dev.nhh.echo.client.Client'
+
+sourceCompatibility = 8
+targetCompatibility = 8
+
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:win"
@@ -67,7 +73,3 @@ dependencies {
     runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:mac"
 }
 
-mainClassName = 'dev.nhh.echo.client.Client'
-
-sourceCompatibility = 11
-targetCompatibility = 11

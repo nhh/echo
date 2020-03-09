@@ -5,13 +5,14 @@ import dev.nhh.echo.server.network.ClientConnection;
 
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Channel extends Thread {
 
     private final UUID channelId;
-    private final ArrayList<ClientConnection> clients = new ArrayList<>();
-    private final ArrayList<VoicePacket> packets = new ArrayList<>();
+    private final ConcurrentLinkedQueue<ClientConnection> clients = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<VoicePacket> packets = new ConcurrentLinkedQueue<>();
     private final AtomicBoolean isRunning = new AtomicBoolean(true);
 
     public Channel(UUID id) {
@@ -44,19 +45,21 @@ public class Channel extends Thread {
 
             if(this.packets.isEmpty()) {
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(16);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 continue;
             }
 
-            var packet = this.packets.get(0);
-            this.packets.remove(0);
+            VoicePacket packet = this.packets.poll();
+            this.packets.remove(packet);
 
-            this.clients.parallelStream()
-                    .filter(c -> c.getUserId() != packet.getUserId())
-                    .forEach(c -> c.send(packet));
+            for(ClientConnection client: clients) {
+                if ( !client.getUserId().equals(packet.getUserId()) ) continue; // We dont want to hear ourselves
+                client.send(packet);
+            }
+
         }
 
     }

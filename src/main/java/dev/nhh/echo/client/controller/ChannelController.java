@@ -20,7 +20,7 @@ public class ChannelController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        var rootIcon = new ImageView(new Image(getClass().getResourceAsStream("/channel/1f4c1.png")));
+        ImageView rootIcon = new ImageView(new Image(getClass().getResourceAsStream("/channel/1f4c1.png")));
         TreeItem<String> root = new TreeItem<>("German Rush Company", rootIcon);
         root.setExpanded(true);
 
@@ -38,18 +38,18 @@ public class ChannelController implements Initializable {
     }
 
     private ObservableList<TreeItem<String>> getUsers() {
-        final var users = new ArrayList<TreeItem<String>>();
+        final ArrayList<TreeItem<String>> users = new ArrayList<TreeItem<String>>();
         users.add(new TreeItem<>("ParadoXxGER @ Niklas", getNewUserIcon()));
         return FXCollections.observableList(users);
     }
 
     private ObservableList<TreeItem<String>> getChannels() {
-        final var channels = new ArrayList<TreeItem<String>>();
+        final ArrayList<TreeItem<String>> channels = new ArrayList<TreeItem<String>>();
 
-        var channel = new TreeItem<>("Eingangshalle", getNewChannelIcon());
+        TreeItem channel = new TreeItem<>("Eingangshalle", getNewChannelIcon());
         channel.getChildren().addAll(getUsers());
 
-        var channelOne = new TreeItem<>("Laberecke #1", getNewChannelIcon());
+        TreeItem channelOne = new TreeItem<>("Laberecke #1", getNewChannelIcon());
         channel.getChildren().addAll(getUsers());
 
         channels.add(channel);
