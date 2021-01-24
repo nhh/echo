@@ -1,0 +1,7 @@
+{
+  "name": "echo-client",
+  "dependencies": {
+    "nuxt": "^2.14.12",
+    "@nuxt/types": "^2.14.12"
+  }
+}
