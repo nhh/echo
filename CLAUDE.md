@@ -93,6 +93,11 @@ idiomatischem Rust neu gebaut.
   `WIRE_VERSION`. Der Versionsvergleich passiert im Handshake, damit der
   Nutzer einen lesbaren Grund bekommt; die ALPN-Kennung bleibt versionslos.
 - Server und Client werden zusammen ausgeliefert.
+- **Die Datenformate auf der Platte sind nicht frei.** `.sqlar`-Archive des
+  Servers und JSONL-Dateien des Clients bleiben mit dem C#-Vorgaenger
+  kompatibel (Tabellen, Spalten, Dateinamen, Unix-Millisekunden, JSON in
+  camelCase, Enums als Text). Eine Aenderung daran braucht ein Ticket, eine
+  Migration und `BREAKING CHANGE:`.
 
 ## 7. Conventional Commits
 
