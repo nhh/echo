@@ -16,8 +16,10 @@ Die Regeln fuer Code, Tests und Commits stehen in [CLAUDE.md](CLAUDE.md).
   `.sqlar`-Archive des C#-Servers ohne Umwandlung: gleiche Tabellen
   (`sqlar`, `messages`, `images`, `files`, `boards`, `board_shapes`,
   `settings`, `channels`, `members`, `bans`, `approvals`, `events`), gleiche
-  Dateinamen (`ArchiveKeys`), Zeiten als Unix-Millisekunden, JSON in
-  camelCase mit Enums als Text. Dasselbe gilt fuer die JSONL-Dateien des
+  Dateinamen (`ArchiveKeys`), gleiche Zeitformate (Nachrichten, Dateien und
+  Tafeln in Unix-Millisekunden, `sqlar.mtime` in Unix-Sekunden, die
+  Server-Tabellen `members`, `bans`, `approvals` und `events` in .NET-Ticks
+  UTC), JSON in camelCase mit Enums als Text. Dasselbe gilt fuer die JSONL-Dateien des
   Clients unter `%AppData%\echo`. Geprueft wird das mit Archiven aus dem
   C#-Server als Testdaten.
 - **Opus in reinem Rust** hinter dem Trait `VoiceCodec`, damit das Crate
@@ -53,7 +55,7 @@ Die Regeln fuer Code, Tests und Commits stehen in [CLAUDE.md](CLAUDE.md).
 | Videodateien | `mp4` bzw. `re_mp4`, `matroska-demuxer` | Ton daraus ueber symphonia und die eigenen Decoder |
 | NV12, Skalieren | `yuvutils-rs` oder wgpu-Compute | |
 | Bildschirmaufnahme | `windows` (DXGI Desktop Duplication) | einziger Video-Teil am Betriebssystem |
-| SQLite, sqlar | `turso`, `flate2` mit `miniz_oxide` | SQLite neu in Rust, gleiches Dateiformat; Tests gegen C#-Archive (echo-226) |
+| SQLite, sqlar | `turso_core` ohne Default-Features (`fs`, `json`, `time`, `uuid`, `pure-rust-crypto`), `flate2` mit `miniz_oxide` | SQLite neu in Rust, gleiches Dateiformat, siehe unten |
 | JSON, JSONL | `serde_json` | |
 | Fenster | `winit` 0.30 | Hauptfenster, Toast, Randleiste, Vollbild; Host wie in picasso.net |
 | GPU | `wgpu` ueber `vello` 0.10 | D3D12 unter Windows |
@@ -78,3 +80,31 @@ Die Regeln fuer Code, Tests und Commits stehen in [CLAUDE.md](CLAUDE.md).
 | `echo-client` | Die Exe: Fenster, Screens, `--shot`, `--selftest` |
 | `echo-server` | QUIC-Listener, `ServerState`, SFU, Archive |
 | `xtask` | `cargo xtask dist` |
+
+## turso und die sqlar-Archive (echo-226)
+
+Geprueft mit Archiven, die der C#-Server selbst geschrieben hat
+(`tests/fixtures/csharp`, erzeugt mit `tools/gen-csharp-fixtures.cs`), und
+gegengelesen mit dem echten SQLite:
+
+- Lesen: alle Tabellen, `page_size=65536`, WAL, Unicode, Bilder, Dateien in
+  16-MB-Stuecken ueber inkrementelles Blob-Lesen (`blob_open`), und ein
+  nicht sauber geschlossenes Archiv, dessen Inhalt nur im `-wal` steht.
+- Schreiben: Chat, `zeroblob` plus inkrementelles Blob-Schreiben,
+  `INSERT OR REPLACE`, Loeschen nach Namensbereich, neues Archiv mit
+  `page_size=65536` und WAL, `CHECK`-Bedingung. SQLite meldet danach
+  `integrity_check = ok` und liest alles wie `sqlite3 -A`.
+- Ein Leser sieht waehrend einer offenen Schreibtransaktion den alten Stand.
+
+Was dabei zu beachten ist:
+
+- **Nicht das Crate `turso` nehmen**, sondern `turso_core`: `turso` zieht C
+  mit (`mimalloc`, `simsimd`, `aegis`, `bindgen`). `turso_core` braucht ohne
+  Default-Features ausdruecklich `uuid`, sonst baut es nicht. `cc` bleibt als
+  Build-Abhaengigkeit von `aegis` im Baum, kompiliert mit `pure-rust` aber
+  nichts.
+- **Lange Pfade unter Windows:** turso oeffnet keine Pfade ueber 260
+  Zeichen. Die Namen der DM-Archive sind 2 x 64 Hexziffern lang; Pfade gehen
+  darum immer als `\\?\`-Pfad an turso.
+- **Kein zweiter Prozess:** turso legt keine `-shm`-Datei an. Ein
+  `sqlite3 -A` darf ein Archiv nur lesen, wenn der Server es nicht offen hat.

@@ -91,7 +91,8 @@ idiomatischem Rust neu gebaut.
   `cc`, `cmake` oder `bindgen` braucht, kein `ring`, kein `aws-lc-rs`, kein
   `-sys`-Crate mit mitgebrachten Quellen. Codecs sind immer Rust; das
   `windows`-Crate nur fuer Geraete (WASAPI, DXGI-Aufnahme, Fenster), nie
-  fuer Media Foundation. CI prueft das mit `cargo tree`. Keine DLL
+  fuer Media Foundation. CI prueft das mit `scripts/check-pure-rust.sh`;
+  einzige Ausnahme ist `cc` unter `aegis`, das mit `pure-rust` nichts baut. Keine DLL
   wird mitgeliefert oder nachgeladen: die Exe bleibt eine Datei.
 - Code und Bezeichner Englisch, Kommentare und UI-Texte Deutsch
   (ae/oe/ue/ss in Kommentaren, echte Umlaute in UI-Texten).
@@ -104,8 +105,10 @@ idiomatischem Rust neu gebaut.
 - Server und Client werden zusammen ausgeliefert.
 - **Die Datenformate auf der Platte sind nicht frei.** `.sqlar`-Archive des
   Servers und JSONL-Dateien des Clients bleiben mit dem C#-Vorgaenger
-  kompatibel (Tabellen, Spalten, Dateinamen, Unix-Millisekunden, JSON in
-  camelCase, Enums als Text). Eine Aenderung daran braucht ein Ticket, eine
+  kompatibel (Tabellen, Spalten, Dateinamen, Zeitformate, JSON in camelCase,
+  Enums als Text; Einzelheiten in `README.md`). `tests/fixtures/csharp`
+  enthaelt Archive des C#-Servers; jede Aenderung am Storage wird dagegen
+  getestet. Eine Aenderung daran braucht ein Ticket, eine
   Migration und `BREAKING CHANGE:`.
 
 ## 7. Conventional Commits
