@@ -1,0 +1,5 @@
+* text=auto eol=lf
+*.sqlar binary
+*.sqlar-wal binary
+*.sqlar-shm binary
+*.png binary
