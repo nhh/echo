@@ -42,9 +42,10 @@ Was der Rust-Port von echo benutzt und warum (echo-224).
 | Bereich | Crate | Anmerkung |
 |---|---|---|
 | Async | `tokio` | |
-| QUIC, Datagramme | `quinn` (ohne `ring`), `rustls` mit `rustls-rustcrypto` | Datagramme nach RFC 9221; Provider ist experimentell, erst Spike |
+| QUIC, Datagramme | `quinn` ohne rustls-Features, `rustls` ohne Provider, dazu `echo-quic` | Datagramme nach RFC 9221. `echo-quic` bringt den TLS-Provider aus RustCrypto und die quinn-Anbindung selbst mit (echo-225); `rustls-rustcrypto` war unbrauchbar (QUIC nur `todo!()`, Luecken in Abhaengigkeiten) |
 | Nachrichten | `serde`, `postcard`, `tokio-util` (LengthDelimitedCodec) | `WIRE_VERSION` im Handshake |
-| Identitaet, Zertifikat | `p256`, `ecdsa`, `sha2`, `x509-cert` | ECDSA P-256 als PEM wie bisher; kein `rcgen`, das `ring` zieht |
+| Identitaet, Zertifikat | `p256`, `sha2`, `x509-cert` | ECDSA P-256 als PEM wie bisher, gleicher Fingerabdruck; kein `rcgen`, das `ring` zieht |
+| TLS-Bausteine | `aes-gcm`, `aes`, `hmac`, `hkdf`, `x25519-dalek` | nur TLS 1.3 mit `TLS13_AES_128_GCM_SHA256`, X25519 und ECDSA P-256; geprueft gegen RFC 9001, Anhang A |
 | Opus | `rusty-opus` | in-band FEC, PLC; Tests gegen die RFC-Vektoren |
 | Rauschunterdrueckung | `nnnoiseless` | RNNoise in Rust |
 | Audio-Ein-/Ausgabe | `wasapi`, sonst `windows` | inkl. Process Loopback (echo-218) |

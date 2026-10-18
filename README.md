@@ -13,8 +13,8 @@ Windows und Linux.
 echo ist ein unabhaengiges Projekt ohne Verbindung zu TeamSpeak Systems.
 
 > **Stand:** in Arbeit. echo gibt es bereits als .NET-Anwendung; dieses
-> Repository portiert sie nach Rust. Fertig sind bisher die Grundlagen des
-> Speichers (`echo-storage`). Was als Naechstes kommt, steht in
+> Repository portiert sie nach Rust. Fertig sind bisher QUIC mit eigenem
+> TLS-Provider (`echo-quic`) und die Grundlagen des Speichers (`echo-storage`). Was als Naechstes kommt, steht in
 > [docs/techstack.md](docs/techstack.md).
 
 ## Was echo ausmacht
@@ -58,6 +58,7 @@ cargo deny check
 | Crate | Inhalt | Stand |
 |---|---|---|
 | `echo-storage` | sqlar-Archive und JSONL, kompatibel zum .NET-Server | begonnen |
+| `echo-quic` | QUIC mit Datagrammen ueber quinn, TLS-Provider in reinem Rust, Zertifikat des Servers | steht |
 | `echo-protocol` | Nachrichten, Framing, Sprachframe, Identitaet, Zertifikat. Keine IO | geplant |
 | `echo-core` | Session, Jitter-Puffer, Mixer, Sprachaktivierung, Decoder, Tafel | geplant |
 | `echo-media` | Codecs und Demuxer in Rust, Audio-Geraete, Bildschirmaufnahme | geplant |

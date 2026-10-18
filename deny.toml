@@ -40,8 +40,8 @@ multiple-versions = "warn"
 wildcards = "deny"
 # Reines Rust: nichts, was C, C++ oder Assembler baut oder mitbringt.
 deny = [
-  { crate = "ring", reason = "C und Assembler; rustls-rustcrypto nehmen" },
-  { crate = "aws-lc-rs", reason = "C; rustls-rustcrypto nehmen" },
+  { crate = "ring", reason = "C und Assembler; echo-quic bringt den Provider mit" },
+  { crate = "aws-lc-rs", reason = "C; echo-quic bringt den Provider mit" },
   { crate = "aws-lc-sys", reason = "C" },
   { crate = "openssl-sys", reason = "C" },
   { crate = "libsqlite3-sys", reason = "C; turso_core nehmen" },
