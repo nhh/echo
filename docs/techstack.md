@@ -27,7 +27,8 @@ Was der Rust-Port von echo benutzt und warum (echo-224).
   kompiliert; kein Crate mit `cc`, `cmake` oder `bindgen` im Build. Alle
   Codecs (Opus, AV1, H.264, AC-3, DTS, mp3/aac/flac) sind Rust. Das
   Betriebssystem wird ueber das `windows`-Crate nur fuer Geraete gerufen:
-  Audio-Ein- und -Ausgabe (WASAPI), Bildschirmaufnahme (DXGI), Fenster und
+  Audio-Ein- und -Ausgabe (WASAPI), Bildschirmaufnahme (Windows Graphics
+  Capture ueber `windows-capture`), Fenster und
   GPU (ueber wgpu). Kein Media Foundation, kein ring, kein aws-lc-rs, kein
   libsqlite3, kein libopus, kein ffmpeg.
 - **Eine Datei:** nichts wird zur Laufzeit ausgepackt oder nachgeladen.
@@ -54,7 +55,7 @@ Was der Rust-Port von echo benutzt und warum (echo-224).
 | H.264 aus Dateien | `rusty_h264` oder `rust_h264` (nur Decoder) | nur beim Sender, um mp4/mov/mkv zu lesen; ins Netz geht AV1 |
 | Videodateien | `mp4` bzw. `re_mp4`, `matroska-demuxer` | Ton daraus ueber symphonia und die eigenen Decoder |
 | NV12, Skalieren | `yuvutils-rs` oder wgpu-Compute | |
-| Bildschirmaufnahme | `windows` (DXGI Desktop Duplication) | einziger Video-Teil am Betriebssystem |
+| Bildschirmaufnahme | `windows-capture` | Windows Graphics Capture in reinem Rust: Bildschirm, einzelne Fenster, Mauszeiger. Linux/macOS offen (echo-230) |
 | SQLite, sqlar | `turso_core` ohne Default-Features (`fs`, `json`, `time`, `uuid`, `pure-rust-crypto`), `flate2` mit `miniz_oxide` | SQLite neu in Rust, gleiches Dateiformat, siehe unten |
 | JSON, JSONL | `serde_json` | |
 | Fenster | `winit` 0.30 | Hauptfenster, Toast, Randleiste, Vollbild; Host wie in picasso.net |

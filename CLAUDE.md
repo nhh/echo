@@ -34,7 +34,7 @@ idiomatischem Rust neu gebaut.
 - **Mindestens 60 % Zeilenabdeckung** ueber den ganzen Workspace, gemessen mit
   `cargo llvm-cov`. CI bricht darunter ab. Die Grenze wird nie gesenkt.
 - Nichts wird pauschal aus der Messung genommen. Plattform-Code (WASAPI,
-  DXGI, Fenster) bleibt duenn: Logik gehoert in
+  Bildschirmaufnahme, Fenster) bleibt duenn: Logik gehoert in
   plattformfreie Funktionen hinter Traits, die sich ohne Geraet testen lassen.
 - Getestet wird alles, was ohne Geraet geht: Protokoll-Roundtrips, Framing,
   Identitaet, Archive, Jitter-Puffer, Mixer, Pegel, Sprachaktivierung,
@@ -94,7 +94,7 @@ idiomatischem Rust neu gebaut.
 - **Reines Rust.** Kein C, C++ oder Assembler im Build: kein Crate, das
   `cc`, `cmake` oder `bindgen` braucht, kein `ring`, kein `aws-lc-rs`, kein
   `-sys`-Crate mit mitgebrachten Quellen. Codecs sind immer Rust; das
-  `windows`-Crate nur fuer Geraete (WASAPI, DXGI-Aufnahme, Fenster), nie
+  `windows`-Crate nur fuer Geraete (WASAPI, Bildschirmaufnahme, Fenster), nie
   fuer Media Foundation. CI prueft das mit `scripts/check-pure-rust.sh`;
   einzige Ausnahme ist `cc` unter `aegis`, das mit `pure-rust` nichts baut. Keine DLL
   wird mitgeliefert oder nachgeladen: die Exe bleibt eine Datei.
