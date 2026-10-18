@@ -1,0 +1,30 @@
+[package]
+name = "echo-protocol"
+description = "Das Protokoll von echo: Nachrichten, Framing, Sprachframe, Identitaet, Rechte"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+base64.workspace = true
+getrandom.workspace = true
+hmac.workspace = true
+p256.workspace = true
+postcard.workspace = true
+rand_core.workspace = true
+serde.workspace = true
+sha2.workspace = true
+subtle.workspace = true
+thiserror.workspace = true
+tokio = { workspace = true, features = ["io-util"] }
+
+[dev-dependencies]
+proptest.workspace = true
+tempfile.workspace = true
+tokio = { workspace = true, features = ["rt", "macros"] }
+
+[lints]
+workspace = true

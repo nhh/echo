@@ -81,6 +81,19 @@ var hostDir = Path.Combine(target, "host");
 using (var host = HostCertificate.LoadOrCreate(Path.Combine(hostDir, "host.crt"), Path.Combine(hostDir, "host.key"), "Testserver"))
     File.WriteAllText(Path.Combine(hostDir, "fingerprint.txt"), HostCertificate.FingerprintOf(host));
 
+// Eine Identitaet wie im Profil des Clients, dazu was C# daraus macht:
+// Fingerabdruck, oeffentlicher Schluessel, eine Signatur ueber das Hello und
+// ein Passwort-Beweis. Rust muss alles gleich lesen und rechnen (echo-231).
+var identityDir = Path.Combine(target, "identity");
+Directory.CreateDirectory(identityDir);
+using (var identity = Identity.Create())
+{
+    File.WriteAllText(Path.Combine(identityDir, "id_ecdsa"), identity.ToPem());
+    var signature = identity.Sign(Identity.HelloPayload("nonce", "SHA256:host", "Alice"));
+    File.WriteAllLines(Path.Combine(identityDir, "expected.txt"),
+        [identity.Fingerprint, identity.PublicKey, signature, Identity.PasswordProof("nonce", "geheim")]);
+}
+
 // Ein Archiv, das nicht sauber geschlossen wurde: Datei und -wal kopieren,
 // waehrend die Verbindung noch offen ist (wie nach einem Absturz).
 var crashDir = Path.Combine(target, "crash");

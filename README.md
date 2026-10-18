@@ -59,7 +59,7 @@ cargo deny check
 |---|---|---|
 | `echo-storage` | SQLite: sqlar-Archive kompatibel zum .NET-Server, Datei des Clients | begonnen |
 | `echo-quic` | QUIC mit Datagrammen ueber quinn, TLS-Provider in reinem Rust, Zertifikat des Servers | steht |
-| `echo-protocol` | Nachrichten, Framing, Sprachframe, Identitaet, Zertifikat. Keine IO | geplant |
+| `echo-protocol` | Nachrichten, Framing, Sprachframe, Identitaet, Rechte. Keine IO | steht |
 | `echo-core` | Session, Jitter-Puffer, Mixer, Sprachaktivierung, Decoder, Tafel | geplant |
 | `echo-media` | Codecs und Demuxer in Rust, Audio-Geraete, Bildschirmaufnahme | geplant |
 | `echo-ui` | Immediate-Mode-Widgets in Fluent 2 auf vello | geplant |

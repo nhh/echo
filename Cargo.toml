@@ -13,10 +13,16 @@ authors = ["Niklas Hanft"]
 [workspace.dependencies]
 echo-storage = { path = "crates/echo-storage" }
 echo-quic = { path = "crates/echo-quic" }
+echo-protocol = { path = "crates/echo-protocol" }
 
 base64 = "0.22"
 bytes = "1"
-tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "time"] }
+serde = { version = "1", features = ["derive"] }
+# Kompaktes, festgelegtes Format fuer die Nachrichten (statt MemoryPack).
+postcard = { version = "1", default-features = false, features = ["use-std"] }
+subtle = "2"
+proptest = "1"
+tokio = "1"
 # QUIC ohne ring (echo-225): quinn ohne rustls-Features, die Anbindung und den
 # Krypto-Provider bringt echo-quic selbst mit.
 quinn = { version = "0.11", default-features = false, features = ["runtime-tokio"] }
