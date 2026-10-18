@@ -6,6 +6,7 @@
 
 mod archive_keys;
 mod channel;
+mod client;
 mod content;
 mod database;
 mod error;
@@ -16,6 +17,7 @@ pub use channel::{
     ArchivedBoard, ArchivedFile, ArchivedImage, ArchivedMessage, ArchivedShape, ChannelArchive,
     is_valid_id,
 };
+pub use client::{ClientDatabase, Favorite, HostVerdict};
 pub use content::ContentReader;
 pub use database::{Connection, Database, Row, Value, param};
 pub use error::StorageError;
