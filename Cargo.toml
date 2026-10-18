@@ -13,7 +13,7 @@ authors = ["Niklas Hanft"]
 [workspace.dependencies]
 echo-storage = { path = "crates/echo-storage" }
 
-base64 = "0.22"
+base64 = "0.23"
 tempfile = "3"
 thiserror = "2"
 # SQLite in Rust (echo-226). Nicht das Crate `turso`: das zieht C mit. Ohne
