@@ -28,17 +28,17 @@ Was der Rust-Port von echo benutzt und warum (echo-224).
   `--shot` und Tests); Text mit harfrust und skrifa. Kein Skia, kein OpenGL.
 - **Reines Rust:** in die Binaries wird kein C, C++ oder Assembler
   kompiliert; kein Crate mit `cc`, `cmake` oder `bindgen` im Build. Alle
-  Codecs (Opus, AV1, H.264, AC-3, DTS, mp3/aac/flac) sind Rust. Das
+  Codecs (Opus, H.264, AC-3, DTS, mp3/aac/flac) sind Rust. Das
   Betriebssystem wird ueber das `windows`-Crate nur fuer Geraete gerufen:
   Audio-Ein- und -Ausgabe (WASAPI), Bildschirmaufnahme (Windows Graphics
   Capture ueber `windows-capture`), Fenster und
   GPU (ueber wgpu). Kein Media Foundation, kein ring, kein aws-lc-rs, kein
   libsqlite3, kein libopus, kein ffmpeg.
 - **Eine Datei:** nichts wird zur Laufzeit ausgepackt oder nachgeladen.
-- **Video ist AV1, kodiert und dekodiert von echo selbst** (rav1e, rav1d) und
-  gezeichnet ueber wgpu. Der Empfaenger braucht keinen Codec und keine
-  Hardware-Unterstuetzung vom System: wer echo hat, sieht jeden Stream, auf
-  jeder Plattform. H.264 wird nur noch dekodiert, um Filmdateien zu lesen.
+- **Video kodiert und dekodiert echo selbst** und zeichnet es ueber wgpu:
+  der Empfaenger braucht keinen Codec vom System. **Welcher Codec, ist
+  zurueckgestellt** (2026-10-18): AV1 in reinem Rust reicht nicht, siehe
+  unten. H.264 wird dekodiert, um Filmdateien zu lesen.
 
 ## Techstack
 
@@ -55,7 +55,7 @@ Was der Rust-Port von echo benutzt und warum (echo-224).
 | Resampling | `rubato` | |
 | Musik dekodieren | `symphonia` | mp3, aac, flac, ogg, wav, mp4, mkv |
 | AC-3, E-AC-3, DTS | eigener Port | aus `WowTs3.Core/Audio/Dolby` und `Dts` |
-| Video im Netz | `rav1e` 0.8 (Encoder, nur `threading`) + `rav1d` 1.1 (Decoder, nur `bitdepth_8`, ueber seine `dav1d_*`-Funktionen mit eigenem safe Wrapper) | AV1, gemessen in echo-227: Bildschirm 1080p mit 15–20 fps als Standard, 720p30 fuer Bewegtes; ~133 ms feste Verzoegerung in rav1e (echo-233). Nicht `rav1d-safe` (AGPL) |
+| Video im Netz | zurueckgestellt | AV1 (rav1e + rav1d) gemessen und vorerst verworfen, siehe Abschnitt unten; H.265 hat in Rust nur Decoder |
 | H.264 aus Dateien | `rusty_h264` (nur Decoder, `default-features = false`) | bit-genau zu ffmpeg, bis 180 fps bei 1080p. Ohne `global-alloc`, das bremst rav1e um 30–45 %. Film geht als 720p24 ins Netz; 1080p schafft rav1e nicht in Echtzeit |
 | Videodateien | `mp4`, `matroska-demuxer` | Bildrate aus Timescale und Sample-Dauern rechnen, `frame_rate()` rundet falsch; Ton ueber symphonia und die eigenen Decoder |
 | YUV, Skalieren | `yuvutils-rs` | reines Rust, BGRA → I420 bei 1080p in 1 ms |
@@ -72,3 +72,29 @@ Was der Rust-Port von echo benutzt und warum (echo-224).
 | Serverzustand | `parking_lot`, `arc-swap` | |
 | CLI, Logs, Fehler | `clap`, `tracing`, `thiserror`, `anyhow` | |
 | Tests | `cargo-llvm-cov`, `proptest`, `insta`, `tempfile` | Zeilenabdeckung mindestens 60 % |
+
+## Video-Codec: Messung und Entscheidung (echo-227)
+
+AV1 in reinem Rust, ohne Assembler, auf einem i9-14900KF (24 Kerne), rav1e
+0.8.1 mit speed 10 und `low_latency`, rav1d 1.1.0:
+
+| Fall | Ergebnis |
+|---|---|
+| Bildschirm 720p30 | haelt mit Reserve |
+| Bildschirm 1080p30 | haelt knapp, einzelne Frames zu spaet, ~10 Kerne belegt |
+| Bildschirm 1440p | ~20 fps |
+| Film 1080p24 (H.264 → AV1) | 15–23 fps, **nicht in Echtzeit** |
+| Film 720p24 | 33 fps, mit Reserve |
+| Dekodieren (rav1d) | unkritisch, 1080p 400+ fps |
+| Latenz | ~160 ms bei 30 fps, davon ~133 ms feste Verzoegerung in rav1e (echo-233) |
+
+Fallen: rav1d 1.x hat nur die C-ABI (`dav1d_*`), aus Rust aufrufbar, aber
+ohne safe API; `rav1d-safe` ist AGPL. rusty_h264 setzt mit seinem
+Default-Feature `global-alloc` einen globalen Allocator, der rav1e um
+30–45 % bremst.
+
+**Entscheidung (2026-10-18): AV1 ist zurueckgestellt.** Video kommt erst,
+wenn ein Codec in reinem Rust die Faelle oben schafft oder die Regel fuer
+Video anders entschieden wird. H.265 ist keine Abkuerzung: in Rust gibt es
+reife Decoder (`rusty_h265`, `rust_h265`), aber keinen brauchbaren Encoder.
+
