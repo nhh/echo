@@ -104,6 +104,7 @@ impl EchoServer {
             settings.clone(),
             database,
             archives,
+            paths.incoming(),
             Box::new(move |line| state_log(line)),
         )?);
 

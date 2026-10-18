@@ -6,7 +6,12 @@
 //! Sprachpakete gehen nicht durch diese Sperre: [`ServerState::members`]
 //! liest den unveraenderlichen Schnappschuss der Clientliste.
 
+mod files;
+
+pub(crate) use files::{ImageRequest, UploadRequest};
+
 use std::collections::HashSet;
+use std::path::PathBuf;
 use std::sync::Arc;
 
 use arc_swap::{ArcSwap, Guard};
@@ -21,8 +26,10 @@ use crate::archives::ArchiveSet;
 use crate::channels::{ChannelRegistry, NewChannel};
 use crate::client::{Client, ClientLink, Frame, NewClient};
 use crate::clients::{ClientRegistry, Members};
+use crate::files::FileStore;
 use crate::stores::{Approval, BanEntry, Member, ServerDatabase, ServerSettings};
 use crate::ticks;
+use crate::transfers::TransferRegistry;
 
 const MAX_CHAT_LENGTH: usize = 4000;
 
@@ -86,6 +93,10 @@ struct Inner {
     archives: Arc<ArchiveSet>,
     channels: ChannelRegistry,
     clients: ClientRegistry,
+    files: FileStore,
+    transfers: TransferRegistry,
+    /// Dateien, deren Inhalt gerade in ein anderes Archiv kopiert wird.
+    relocating: HashSet<String>,
 }
 
 pub(crate) struct ServerState {
@@ -105,6 +116,7 @@ impl ServerState {
         settings: ServerSettings,
         db: ServerDatabase,
         archives: Arc<ArchiveSet>,
+        incoming: PathBuf,
         log: Log,
     ) -> Result<Self, StorageError> {
         let (channels, changed) = ChannelRegistry::load(db.channels()?);
@@ -117,6 +129,11 @@ impl ServerState {
             .map(|c| c.id)
             .collect();
         archives.retire_orphans(&permanent);
+        let files = FileStore::load(
+            Arc::clone(&archives),
+            incoming,
+            channels.all().map(|c| c.id),
+        )?;
 
         let members = Arc::new(ArcSwap::from_pointee(Members::new()));
         Ok(Self {
@@ -126,6 +143,9 @@ impl ServerState {
                 archives,
                 channels,
                 clients: ClientRegistry::new(Arc::clone(&members)),
+                files,
+                transfers: TransferRegistry::default(),
+                relocating: HashSet::new(),
             }),
             members,
             log,
@@ -564,7 +584,7 @@ impl ServerState {
             });
             return;
         };
-        if let Err(error) = publish(&route, from, clean) {
+        if let Err(error) = publish(&route, from, clean, None) {
             self.log(&format!("Chat nicht gespeichert: {error}"));
         }
     }
@@ -901,6 +921,7 @@ fn delete_recursive(inner: &mut Inner, channel_id: u64) {
         }
     }
     inner.channels.remove(channel_id);
+    inner.files.delete_channel(channel_id);
     inner.archives.retire_channel(channel_id, removed.permanent);
     broadcast(inner, &Message::ChannelRemoved { channel_id }, None);
 }
@@ -1056,13 +1077,18 @@ fn route(
 /// Haengt die Nachricht an ihr Archiv und verteilt sie mit ihrer Nummer. Der
 /// Absender bekommt sie immer, auch wenn er inzwischen den Kanal gewechselt
 /// hat: erst mit ihr weiss er, dass sie angekommen ist.
-fn publish(route: &Route, from: &Client, text: &str) -> Result<(), StorageError> {
+fn publish(
+    route: &Route,
+    from: &Client,
+    text: &str,
+    image: Option<&str>,
+) -> Result<(), StorageError> {
     let message = route.archive.append(
         ticks::unix_millis_now(),
         from.fingerprint(),
         &from.name(),
         text,
-        None,
+        image,
     )?;
     let dto = to_dto(&route.archive, &message);
     for (to, archive) in &route.recipients {

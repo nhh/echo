@@ -57,6 +57,12 @@ impl ServerPaths {
         self.archives().join("trash")
     }
 
+    /// Laufende Uploads, bis sie ins Archiv ihres Kanals uebernommen sind.
+    #[must_use]
+    pub fn incoming(&self) -> PathBuf {
+        self.archives().join("incoming")
+    }
+
     #[must_use]
     pub fn host_certificate(&self) -> PathBuf {
         self.root.join("host_cert.pem")
@@ -91,6 +97,7 @@ mod tests {
         assert!(paths.channel_archives().ends_with("archives/channels"));
         assert!(paths.dm_archives().ends_with("archives/dm"));
         assert!(paths.archive_trash().ends_with("archives/trash"));
+        assert!(paths.incoming().ends_with("archives/incoming"));
         assert!(paths.host_certificate().ends_with("host_cert.pem"));
         assert!(paths.host_key().ends_with("host_key.pem"));
         assert!(default_root().unwrap().ends_with("echo-server"));

@@ -51,6 +51,18 @@ impl ArchiveSet {
         Ok(archive)
     }
 
+    /// Wie [`Self::channel`], aber `None`, solange es fuer den Kanal keines
+    /// gibt (etwa, weil er inzwischen geloescht ist).
+    pub(crate) fn existing_channel(
+        &self,
+        id: u64,
+    ) -> Result<Option<Arc<ChannelArchive>>, StorageError> {
+        if self.channels.lock().contains_key(&id) || self.channel_path(id).exists() {
+            return self.channel(id).map(Some);
+        }
+        Ok(None)
+    }
+
     /// Das Archiv des Gespraechs zweier Fingerabdruecke; mit `create` false
     /// `None`, solange es keines gibt. Auch `None`, wenn einer der beiden
     /// kein gueltiger Fingerabdruck ist.

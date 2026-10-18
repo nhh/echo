@@ -10,6 +10,7 @@
 mod error;
 mod framing;
 mod identity;
+mod image_formats;
 mod messages;
 mod rights;
 mod voice_frame;
@@ -18,6 +19,7 @@ mod wire;
 pub use error::ProtocolError;
 pub use framing::{decode, encode, read_message, write_message};
 pub use identity::{Identity, PasswordProof, hello_payload, new_nonce};
+pub use image_formats::ImageFormat;
 pub use messages::{
     ApprovalDto, ApprovalState, ArchiveRef, BoardDto, ChannelDto, ChatImageDto, ChatMessageDto,
     ChatScope, ClientDto, DmSummary, Envelope, FileEntryDto, LeaveReason, Message, Role, ShapeDto,

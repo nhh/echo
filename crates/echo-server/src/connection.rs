@@ -17,6 +17,8 @@ use tokio_util::sync::CancellationToken;
 
 use crate::client::{Client, ClientLink, Frame};
 use crate::state::{Admission, ChannelEdit, ChannelRequest, ServerState, StateChange};
+use crate::state::{ImageRequest, UploadRequest};
+use crate::transfer;
 
 const HANDSHAKE_TIMEOUT: Duration = Duration::from_secs(10);
 
@@ -92,13 +94,21 @@ type Accepted = (
 /// Client abgewiesen wurde; der Grund ist dann schon unterwegs.
 async fn accept(
     connection: &quinn::Connection,
-    state: &ServerState,
+    state: &Arc<ServerState>,
     host_fingerprint: &str,
     closing: &CancellationToken,
 ) -> Result<Option<Accepted>, ConnectionError> {
     let (mut send, mut recv) =
         tokio::time::timeout(HANDSHAKE_TIMEOUT, connection.accept_bi()).await??;
-    let Some(nonce) = challenge(state, &mut send, &mut recv).await? else {
+    let first = tokio::time::timeout(HANDSHAKE_TIMEOUT, read_message(&mut recv))
+        .await??
+        .ok_or(ConnectionError::Unexpected("Stream endete vor Open"))?;
+    if let Message::TransferHello { token } = &first.message {
+        // Eine Datenverbindung, kein Client: Datei uebertragen und auflegen.
+        transfer::run(state, send, recv, first.request_id, token).await;
+        return Ok(None);
+    }
+    let Some(nonce) = challenge(state, &mut send, &mut recv, first).await? else {
         return Ok(None);
     };
     let Some((admission, request_id)) =
@@ -130,20 +140,18 @@ async fn accept(
     }
 }
 
-/// Liest `Open`, prueft die Version und schickt die `Challenge`; liefert
-/// ihre Nonce, oder `None` nach einer Ablehnung.
+/// Prueft die Version aus `Open` und schickt die `Challenge`; liefert ihre
+/// Nonce, oder `None` nach einer Ablehnung.
 async fn challenge(
     state: &ServerState,
     send: &mut quinn::SendStream,
     recv: &mut quinn::RecvStream,
+    open: Envelope,
 ) -> Result<Option<String>, ConnectionError> {
-    let open = tokio::time::timeout(HANDSHAKE_TIMEOUT, read_message(recv))
-        .await??
-        .ok_or(ConnectionError::Unexpected("Stream endete vor Open"))?;
     let version = match open.message {
         Message::Open { version } => Some(version),
-        Message::TransferHello { .. } | Message::StreamHello { .. } => {
-            // Dateien und Medien kommen in eigenen Etappen des Ports.
+        Message::StreamHello { .. } => {
+            // Medien kommen in einer eigenen Etappe des Ports.
             refuse(
                 send,
                 recv,
@@ -295,7 +303,7 @@ async fn send_loop(mut send: quinn::SendStream, mut outbox: mpsc::Receiver<Frame
     }
 }
 
-async fn control_loop(mut recv: quinn::RecvStream, state: &ServerState, client: &Client) {
+async fn control_loop(mut recv: quinn::RecvStream, state: &Arc<ServerState>, client: &Client) {
     while let Ok(Some(envelope)) = read_message(&mut recv).await {
         handle(state, client, envelope);
     }
@@ -303,7 +311,7 @@ async fn control_loop(mut recv: quinn::RecvStream, state: &ServerState, client: 
 
 /// Eine Anfrage ausfuehren. Anfragen mit `request_id` bekommen immer eine
 /// Antwort: ihr Ergebnis oder `Reply`.
-fn handle(state: &ServerState, client: &Client, envelope: Envelope) {
+fn handle(state: &Arc<ServerState>, client: &Client, envelope: Envelope) {
     let id = envelope.request_id;
     let result = answer(state, client, envelope.message);
     match result {
@@ -329,7 +337,7 @@ fn handle(state: &ServerState, client: &Client, envelope: Envelope) {
 /// `Ok(Some)` ist eine eigene Antwort, `Ok(None)` ein schlichtes "erledigt".
 type Answer = Result<Option<Message>, String>;
 
-fn answer(state: &ServerState, client: &Client, message: Message) -> Answer {
+fn answer(state: &Arc<ServerState>, client: &Client, message: Message) -> Answer {
     match message {
         Message::Ping => Ok(Some(Message::Pong)),
         Message::SendChat {
@@ -369,6 +377,15 @@ fn answer(state: &ServerState, client: &Client, message: Message) -> Answer {
         Message::DecideApproval { fingerprint, allow } => {
             done(state.decide_approval(client, &fingerprint, allow))
         }
+        request @ (Message::ListFiles { .. }
+        | Message::CreateFolder { .. }
+        | Message::RenameFile { .. }
+        | Message::MoveFile { .. }
+        | Message::DeleteFile { .. }
+        | Message::RequestUpload { .. }
+        | Message::RequestDownload { .. }
+        | Message::RequestChatImage { .. }
+        | Message::RequestImageDownload { .. }) => file_request(state, client, request),
         request @ (Message::JoinChannel { .. }
         | Message::CreateChannel { .. }
         | Message::EditChannel { .. }
@@ -449,6 +466,70 @@ fn moderation_request(state: &ServerState, client: &Client, message: Message) ->
             channel_id,
         } => done(state.move_client(client, client_id, channel_id)),
         Message::SetRole { fingerprint, role } => done(state.set_role(client, &fingerprint, role)),
+        _ => Err(UNKNOWN.into()),
+    }
+}
+
+/// Dateibereich, Uebertragungen und Chatbilder.
+fn file_request(state: &Arc<ServerState>, client: &Client, message: Message) -> Answer {
+    match message {
+        Message::ListFiles { channel, folder } => state.list_files(channel, &folder).map(Some),
+        Message::CreateFolder {
+            channel,
+            folder,
+            name,
+        } => done(state.create_folder(client, channel, &folder, &name)),
+        Message::RenameFile { file_id, name } => done(state.rename_file(client, &file_id, &name)),
+        Message::MoveFile {
+            file_id,
+            channel,
+            folder,
+        } => done(state.move_file(client, &file_id, channel, &folder)),
+        Message::DeleteFile { file_id } => done(state.delete_file(client, &file_id)),
+        Message::RequestUpload {
+            channel,
+            folder,
+            name,
+            size,
+        } => state
+            .begin_upload(
+                client,
+                UploadRequest {
+                    channel,
+                    folder,
+                    name,
+                    size,
+                },
+            )
+            .map(Some),
+        Message::RequestDownload {
+            file_id,
+            offset,
+            stream,
+        } => state
+            .begin_download(client, &file_id, offset, stream)
+            .map(Some),
+        Message::RequestChatImage {
+            scope,
+            target,
+            size,
+            width,
+            height,
+        } => state
+            .begin_chat_image(
+                client,
+                &ImageRequest {
+                    scope,
+                    target,
+                    size,
+                    width,
+                    height,
+                },
+            )
+            .map(Some),
+        Message::RequestImageDownload { archive, image_id } => state
+            .begin_image_download(client, &archive, &image_id)
+            .map(Some),
         _ => Err(UNKNOWN.into()),
     }
 }

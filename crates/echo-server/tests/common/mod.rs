@@ -293,3 +293,69 @@ impl TestClient {
         .flatten()
     }
 }
+
+/// Die Datenverbindung: eigene QUIC-Verbindung mit `TransferHello`. Liefert
+/// die erste Antwort des Servers und die Streams fuer die Bytes.
+pub async fn data_connection(
+    address: SocketAddr,
+    token: &str,
+) -> (
+    Endpoint,
+    quinn::Connection,
+    quinn::SendStream,
+    quinn::RecvStream,
+    Result<(), String>,
+) {
+    let endpoint = client_endpoint();
+    let connection = endpoint.connect(address, "echo").unwrap().await.unwrap();
+    let (mut send, mut recv) = connection.open_bi().await.unwrap();
+    let hello = Envelope {
+        request_id: 1,
+        message: Message::TransferHello {
+            token: token.into(),
+        },
+    };
+    write_message(&mut send, &hello).await.unwrap();
+    let answer = match read(&mut recv).await.message {
+        Message::Reply { ok: true, .. } => Ok(()),
+        Message::Reply { ok: false, error } => Err(error.unwrap_or_default()),
+        other => panic!("Reply erwartet: {other:?}"),
+    };
+    (endpoint, connection, send, recv, answer)
+}
+
+/// Laedt `bytes` mit dem Token hoch; `Err` mit dem Grund des Servers.
+pub async fn upload(address: SocketAddr, token: &str, bytes: &[u8]) -> Result<(), String> {
+    let (_endpoint, _connection, mut send, mut recv, opened) =
+        data_connection(address, token).await;
+    opened?;
+    send.write_all(bytes).await.unwrap();
+    let finished = match read(&mut recv).await.message {
+        Message::Reply { ok: true, .. } => Ok(()),
+        Message::Reply { ok: false, error } => Err(error.unwrap_or_default()),
+        other => panic!("Reply erwartet: {other:?}"),
+    };
+    send.finish().unwrap();
+    finished
+}
+
+/// Laedt mit dem Token herunter.
+pub async fn download(address: SocketAddr, token: &str) -> Result<Vec<u8>, String> {
+    let (_endpoint, _connection, mut send, mut recv, opened) =
+        data_connection(address, token).await;
+    opened?;
+    let bytes = tokio::time::timeout(TIMEOUT, recv.read_to_end(usize::MAX))
+        .await
+        .expect("Download stockt")
+        .unwrap();
+    send.finish().unwrap();
+    Ok(bytes)
+}
+
+/// Das Token aus einem `TransferTicket`.
+pub fn token(message: Message) -> String {
+    match message {
+        Message::TransferTicket { token, .. } => token,
+        other => panic!("TransferTicket erwartet: {other:?}"),
+    }
+}

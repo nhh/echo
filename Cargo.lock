@@ -719,6 +719,7 @@ dependencies = [
  "echo-protocol",
  "echo-quic",
  "echo-storage",
+ "getrandom 0.2.17",
  "parking_lot",
  "quinn",
  "serde",

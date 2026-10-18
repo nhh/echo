@@ -22,6 +22,7 @@ dirs.workspace = true
 echo-protocol.workspace = true
 echo-quic.workspace = true
 echo-storage.workspace = true
+getrandom.workspace = true
 parking_lot.workspace = true
 quinn.workspace = true
 serde.workspace = true
@@ -29,7 +30,7 @@ serde_json.workspace = true
 socket2.workspace = true
 thiserror.workspace = true
 time.workspace = true
-tokio = { workspace = true, features = ["rt-multi-thread", "macros", "net", "time", "sync", "signal"] }
+tokio = { workspace = true, features = ["rt-multi-thread", "macros", "net", "time", "sync", "signal", "fs", "io-util"] }
 tokio-util.workspace = true
 
 [dev-dependencies]
