@@ -20,7 +20,8 @@ idiomatischem Rust neu gebaut.
   ```
   cargo fmt --all --check
   cargo clippy --workspace --all-targets -- -D warnings
-  cargo llvm-cov nextest --workspace --fail-under-lines 60
+  cargo llvm-cov --workspace --fail-under-lines 60
+  cargo deny check
   ```
   UI-Aenderungen zusaetzlich mit `cargo run -p echo-client -- --shot out.png`
   und einem Blick auf das Bild.

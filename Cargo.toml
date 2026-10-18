@@ -1,0 +1,60 @@
+[workspace]
+resolver = "3"
+members = ["crates/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.98"
+license = "MIT"
+repository = "https://github.com/nhh/echo"
+authors = ["Niklas Hanft"]
+
+[workspace.dependencies]
+echo-storage = { path = "crates/echo-storage" }
+
+base64 = "0.22"
+tempfile = "3"
+thiserror = "2"
+# SQLite in Rust (echo-226). Nicht das Crate `turso`: das zieht C mit. Ohne
+# Default-Features braucht turso_core `uuid` ausdruecklich, sonst baut es nicht.
+turso_core = { version = "0.8.3", default-features = false, features = [
+  "fs",
+  "json",
+  "time",
+  "uuid",
+  "pure-rust-crypto",
+] }
+
+[workspace.lints.rust]
+# Ausnahmen nur in Plattform-Crates (WASAPI, DXGI, Fenster); die setzen
+# eigene [lints] mit `unsafe_code = "deny"` und `// SAFETY:` je Block.
+unsafe_code = "forbid"
+missing_debug_implementations = "warn"
+unreachable_pub = "warn"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+# Fehler sind Werte (CLAUDE.md 3): kein unwrap/expect ausserhalb von Tests.
+unwrap_used = "warn"
+expect_used = "warn"
+panic = "warn"
+dbg_macro = "warn"
+todo = "warn"
+print_stdout = "warn"
+# Deutsche Doku-Kommentare: Woerter wie "SQLite" oder "WAL" sind kein Code.
+doc_markdown = "allow"
+# Die Fehlerarten stehen am Fehlertyp, nicht an jeder Funktion.
+missing_errors_doc = "allow"
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
+
+# Tests laufen mit optimierten Abhaengigkeiten (SQLite, spaeter Codecs),
+# sonst sind sie unnoetig langsam.
+[profile.dev.package."*"]
+opt-level = 3

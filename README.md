@@ -66,7 +66,7 @@ Die Regeln fuer Code, Tests und Commits stehen in [CLAUDE.md](CLAUDE.md).
 | Tray, Dialog, Zwischenablage | `tray-icon`, `rfd`, `arboard` | Push-to-Talk ueber `GetAsyncKeyState` |
 | Serverzustand | `parking_lot`, `arc-swap` | |
 | CLI, Logs, Fehler | `clap`, `tracing`, `thiserror`, `anyhow` | |
-| Tests | `cargo-nextest`, `cargo-llvm-cov`, `proptest`, `insta` | Zeilenabdeckung mindestens 60 % |
+| Tests | `cargo-llvm-cov`, `proptest`, `insta`, `tempfile` | Zeilenabdeckung mindestens 60 % |
 
 ## Aufbau (geplant)
 
