@@ -1,0 +1,4 @@
+# In Tests ist ein Panic die richtige Antwort auf "kann nicht sein".
+allow-unwrap-in-tests = true
+allow-expect-in-tests = true
+allow-panic-in-tests = true

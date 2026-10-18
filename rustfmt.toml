@@ -1,0 +1,2 @@
+# Sonst Standard: rustfmt entscheidet, nicht der Geschmack.
+style_edition = "2024"

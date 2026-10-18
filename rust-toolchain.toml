@@ -1,0 +1,5 @@
+# Feste Toolchain: CI und lokal bauen mit demselben Compiler.
+[toolchain]
+channel = "1.98.1"
+components = ["rustfmt", "clippy", "llvm-tools"]
+profile = "minimal"

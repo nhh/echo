@@ -1,4 +1,19 @@
+# Bauen
 /target
 /dist
+
+# Abdeckung
 *.profraw
+*.profdata
 lcov.info
+/coverage
+
+# Screenshots aus --shot, ausser den eingecheckten unter docs/
+/*.png
+
+# Editoren und Betriebssystem
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
