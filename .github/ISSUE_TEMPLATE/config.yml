@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Sicherheitsluecke melden
+    url: https://github.com/nhh/echo/security/advisories/new
+    about: Bitte nicht oeffentlich, sondern privat melden (SECURITY.md).

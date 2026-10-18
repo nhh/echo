@@ -3,13 +3,16 @@
 Dieses Repository ist der Port von echo nach Rust: Sprachchat mit eigenem
 Server und Client, der Client als **eine einzelne Windows-Exe**, der Server
 als Konsole fuer Windows und Linux. Das Vorbild ist das C#-Repository
-`../wowts3` (github.com/nhh/wowts3). Was dort steht, ist die Referenz fuer
+`../wowts3` (github.com/nhh/wowts3, nicht oeffentlich; wie `../picasso.net`
+nur fuer Maintainer mit Zugriff). Was dort steht, ist die Referenz fuer
 Verhalten und Aussehen; hier wird es nicht 1:1 abgeschrieben, sondern in
 idiomatischem Rust neu gebaut.
 
 ## 1. Vor jeder Aenderung
 
-- Erst diese Datei und `README.md` lesen, dann den betroffenen Crate.
+- Erst diese Datei, `README.md` und `docs/` lesen, dann den betroffenen Crate.
+- Das Repository ist oeffentlich (MIT). Nichts Internes hinein: keine
+  Zugangsdaten, keine Hostnamen von Servern, keine Kundendaten.
 - Bei Fragen zum gewollten Verhalten im C#-Code nachsehen
   (`../wowts3/src/...`), nicht raten. `../wowts3` wird nicht veraendert.
 - Fuer Fenster, wgpu, 2D-Zeichnen, Text und Widgets ist `../picasso.net`
@@ -107,7 +110,7 @@ idiomatischem Rust neu gebaut.
 - **Die Datenformate auf der Platte sind nicht frei.** `.sqlar`-Archive des
   Servers und JSONL-Dateien des Clients bleiben mit dem C#-Vorgaenger
   kompatibel (Tabellen, Spalten, Dateinamen, Zeitformate, JSON in camelCase,
-  Enums als Text; Einzelheiten in `README.md`). `tests/fixtures/csharp`
+  Enums als Text; Einzelheiten in `docs/techstack.md` und `docs/storage.md`). `tests/fixtures/csharp`
   enthaelt Archive des C#-Servers; jede Aenderung am Storage wird dagegen
   getestet. Eine Aenderung daran braucht ein Ticket, eine
   Migration und `BREAKING CHANGE:`.
@@ -128,10 +131,12 @@ Refs: echo-<n>
 `build`, `ci`, `chore`, `style`.
 
 **Bereiche** (optional): `protocol`, `storage`, `core`, `audio`, `video`,
-`session`, `server`, `ui`, `client`, `board`, `build`, `ci`.
+`session`, `server`, `ui`, `client`, `board`, `build`, `ci`, `deps`.
 
 - **Jeder Commit nennt sein Ticket im Footer: `Refs: echo-<n>`**, auch
-  Zwischenschritte und Tests. Ohne Ticket kein Commit.
+  Zwischenschritte und Tests. Ohne Ticket kein Commit. Beitraege von aussen
+  nennen ihr GitHub-Issue (`Refs: #<n>`). `scripts/check-commits.sh` prueft
+  das in CI.
 - Kurzbeschreibung Englisch, Imperativ, klein, ohne Punkt, max. 72 Zeichen.
 - Ein Commit = eine logische Aenderung. Refactoring und Feature nie mischen.
 - `!` bzw. `BREAKING CHANGE:` bei inkompatiblen Aenderungen an

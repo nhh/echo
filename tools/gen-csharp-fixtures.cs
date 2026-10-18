@@ -5,7 +5,9 @@
 #:property PublishAot=false
 
 // Erzeugt Archive mit dem echten C#-Code von echo als Testdaten fuer den
-// Rust-Port (echo-226). Aufruf: dotnet run gen.cs -- <ziel> [--large]
+// Rust-Port (echo-226). Braucht den C#-Vorgaenger (nicht oeffentlich) in
+// ../wowts3 neben diesem Repository; die erzeugten Archive liegen fertig in
+// tests/fixtures/csharp. Aufruf: dotnet run tools/gen-csharp-fixtures.cs -- <ziel> [--large]
 using WowTs3.Protocol;
 using WowTs3.Server;
 using WowTs3.Server.Storage;

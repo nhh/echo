@@ -1,0 +1,44 @@
+name: Fehler
+description: Etwas funktioniert nicht wie erwartet.
+labels: [bug]
+body:
+  - type: textarea
+    id: steps
+    attributes:
+      label: Was hast du getan?
+      description: Schritte, mit denen sich der Fehler nachstellen laesst.
+      placeholder: |
+        1. Mit dem Server verbinden
+        2. Den Kanal „Lobby“ betreten
+        3. …
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Was hast du erwartet?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Was ist passiert?
+      description: Fehlermeldung, Log-Ausschnitt oder Screenshot.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version oder Commit
+      placeholder: "echo --version oder git rev-parse --short HEAD"
+  - type: dropdown
+    id: part
+    attributes:
+      label: Betroffen
+      multiple: true
+      options: [Client, Server, Protokoll, Archive, Build]
+  - type: input
+    id: system
+    attributes:
+      label: Betriebssystem
+      placeholder: "Windows 11 24H2, Debian 13, …"

@@ -1,0 +1,19 @@
+name: Wunsch
+description: Eine neue Faehigkeit oder eine Verbesserung vorschlagen.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Was willst du erreichen?
+      description: Das Ziel, nicht die Loesung.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Wie koennte es aussehen?
+  - type: textarea
+    id: out
+    attributes:
+      label: Was gehoert ausdruecklich nicht dazu?
