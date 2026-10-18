@@ -22,6 +22,8 @@ echo ist ein unabhaengiges Projekt ohne Verbindung zu TeamSpeak Systems.
 - **Eigenes Protokoll ueber QUIC:** ein Steuerstream fuer Nachrichten, ein
   QUIC-Datagramm je 20-ms-Sprachframe. Der Server leitet nur weiter (SFU),
   gemischt wird im Client.
+- **Video in AV1, von echo selbst kodiert und dekodiert:** wer echo hat,
+  sieht jeden Stream, egal was das System an Codecs mitbringt.
 - **Identitaet wie bei SSH:** ein ECDSA-Schluessel je Nutzer, der
   Fingerabdruck ist die Nutzer-ID; der Server wird beim ersten Verbinden
   gemerkt und danach geprueft.
@@ -29,7 +31,7 @@ echo ist ein unabhaengiges Projekt ohne Verbindung zu TeamSpeak Systems.
   [sqlar](https://sqlite.org/sqlar.html): je Kanal eine Datei mit Chat,
   Bildern und Dateien, lesbar mit `sqlite3 -A`.
 - **Reines Rust:** kein C, kein C++, kein Assembler, kein ffmpeg. Codecs
-  (Opus, H.264, AC-3, DTS) sind Rust; das Betriebssystem wird nur fuer
+  (Opus, AV1, AC-3, DTS) sind Rust; das Betriebssystem wird nur fuer
   Geraete gerufen (Audio, Bildschirm, Fenster, GPU).
 
 ## Bauen

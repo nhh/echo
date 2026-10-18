@@ -25,12 +25,16 @@ Was der Rust-Port von echo benutzt und warum (echo-224).
   `--shot` und Tests); Text mit harfrust und skrifa. Kein Skia, kein OpenGL.
 - **Reines Rust:** in die Binaries wird kein C, C++ oder Assembler
   kompiliert; kein Crate mit `cc`, `cmake` oder `bindgen` im Build. Alle
-  Codecs (Opus, H.264, AC-3, DTS, mp3/aac/flac) sind Rust. Das
+  Codecs (Opus, AV1, H.264, AC-3, DTS, mp3/aac/flac) sind Rust. Das
   Betriebssystem wird ueber das `windows`-Crate nur fuer Geraete gerufen:
   Audio-Ein- und -Ausgabe (WASAPI), Bildschirmaufnahme (DXGI), Fenster und
   GPU (ueber wgpu). Kein Media Foundation, kein ring, kein aws-lc-rs, kein
   libsqlite3, kein libopus, kein ffmpeg.
 - **Eine Datei:** nichts wird zur Laufzeit ausgepackt oder nachgeladen.
+- **Video ist AV1, kodiert und dekodiert von echo selbst** (rav1e, rav1d) und
+  gezeichnet ueber wgpu. Der Empfaenger braucht keinen Codec und keine
+  Hardware-Unterstuetzung vom System: wer echo hat, sieht jeden Stream, auf
+  jeder Plattform. H.264 wird nur noch dekodiert, um Filmdateien zu lesen.
 
 ## Techstack
 
@@ -46,7 +50,8 @@ Was der Rust-Port von echo benutzt und warum (echo-224).
 | Resampling | `rubato` | |
 | Musik dekodieren | `symphonia` | mp3, aac, flac, ogg, wav, mp4, mkv |
 | AC-3, E-AC-3, DTS | eigener Port | aus `WowTs3.Core/Audio/Dolby` und `Dts` |
-| H.264 | `rusty_h264` | Encoder und Decoder in Rust; erst Spike (echo-227), Rueckfall AV1 mit `rav1e` + `rav1d` |
+| Video im Netz | `rav1e` (Encoder) + `rav1d` bzw. `rav1d-safe` (Decoder), beide ohne Feature `asm` | AV1 fuer Bildschirm und Film; Echtzeit mit `low_latency`, Geschwindigkeit erst messen (echo-227) |
+| H.264 aus Dateien | `rusty_h264` oder `rust_h264` (nur Decoder) | nur beim Sender, um mp4/mov/mkv zu lesen; ins Netz geht AV1 |
 | Videodateien | `mp4` bzw. `re_mp4`, `matroska-demuxer` | Ton daraus ueber symphonia und die eigenen Decoder |
 | NV12, Skalieren | `yuvutils-rs` oder wgpu-Compute | |
 | Bildschirmaufnahme | `windows` (DXGI Desktop Duplication) | einziger Video-Teil am Betriebssystem |
