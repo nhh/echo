@@ -27,10 +27,12 @@ Die Regeln fuer Code, Tests und Commits stehen in [CLAUDE.md](CLAUDE.md).
   Zeichenliste, abgespielt auf vello (GPU) oder vello_cpu (ohne GPU, fuer
   `--shot` und Tests); Text mit harfrust und skrifa. Kein Skia, kein OpenGL.
 - **Reines Rust:** in die Binaries wird kein C, C++ oder Assembler
-  kompiliert; kein Crate mit `cc`, `cmake` oder `bindgen` im Build. Erlaubt
-  sind Aufrufe von Betriebssystem-APIs ueber das `windows`-Crate (WASAPI,
-  Media Foundation, D3D, Win32) und was wgpu vom System nutzt. Darum kein
-  `ring`, kein `aws-lc-rs`, kein libsqlite3, kein libopus, kein ffmpeg.
+  kompiliert; kein Crate mit `cc`, `cmake` oder `bindgen` im Build. Alle
+  Codecs (Opus, H.264, AC-3, DTS, mp3/aac/flac) sind Rust. Das
+  Betriebssystem wird ueber das `windows`-Crate nur fuer Geraete gerufen:
+  Audio-Ein- und -Ausgabe (WASAPI), Bildschirmaufnahme (DXGI), Fenster und
+  GPU (ueber wgpu). Kein Media Foundation, kein ring, kein aws-lc-rs, kein
+  libsqlite3, kein libopus, kein ffmpeg.
 - **Eine Datei:** nichts wird zur Laufzeit ausgepackt oder nachgeladen.
 
 ## Techstack
@@ -47,7 +49,10 @@ Die Regeln fuer Code, Tests und Commits stehen in [CLAUDE.md](CLAUDE.md).
 | Resampling | `rubato` | |
 | Musik dekodieren | `symphonia` | mp3, aac, flac, ogg, wav, mp4, mkv |
 | AC-3, E-AC-3, DTS | eigener Port | aus `WowTs3.Core/Audio/Dolby` und `Dts` |
-| Video | `windows` (Media Foundation, D3D11, DXGI) | H.264 in Hardware, Desktop Duplication |
+| H.264 | `rusty_h264` | Encoder und Decoder in Rust; erst Spike (echo-227), Rueckfall AV1 mit `rav1e` + `rav1d` |
+| Videodateien | `mp4` bzw. `re_mp4`, `matroska-demuxer` | Ton daraus ueber symphonia und die eigenen Decoder |
+| NV12, Skalieren | `yuvutils-rs` oder wgpu-Compute | |
+| Bildschirmaufnahme | `windows` (DXGI Desktop Duplication) | einziger Video-Teil am Betriebssystem |
 | SQLite, sqlar | `turso` (SQLite neu in Rust, Beta), `flate2` mit `miniz_oxide` | Dateiformat von SQLite; erst Spike gegen C#-Archive |
 | JSON, JSONL | `serde_json` | |
 | Fenster | `winit` 0.30 | Hauptfenster, Toast, Randleiste, Vollbild; Host wie in picasso.net |
@@ -68,7 +73,7 @@ Die Regeln fuer Code, Tests und Commits stehen in [CLAUDE.md](CLAUDE.md).
 | `echo-protocol` | Nachrichten, Framing, Sprachframe, Identitaet, Host-Zertifikat, `VoiceCodec`. Keine IO |
 | `echo-storage` | sqlar-Archive, Kanalarchiv, JSONL |
 | `echo-core` | Session, Jitter-Puffer, Mixer, Sprachaktivierung, Decoder, Whiteboard, Text. Plattformfrei |
-| `echo-media` | WASAPI, Media Foundation, D3D11. Nur Windows |
+| `echo-media` | Codecs und Demuxer in Rust; dazu WASAPI und DXGI-Aufnahme, nur unter Windows |
 | `echo-ui` | Immediate-Mode-Widgets in Fluent 2 auf vello |
 | `echo-client` | Die Exe: Fenster, Screens, `--shot`, `--selftest` |
 | `echo-server` | QUIC-Listener, `ServerState`, SFU, Archive |
