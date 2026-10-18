@@ -54,7 +54,7 @@ async fn first_key_owns_the_server_and_others_see_who_joins() {
         Err("Client ist nicht online.".into())
     );
     assert_eq!(
-        alice.ask(Message::ListBoards { channel: 1 }).await,
+        alice.ask(Message::WatchStream { stream_id: 1 }).await,
         Err("Unbekannte Anfrage.".into())
     );
 

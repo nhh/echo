@@ -6,6 +6,7 @@
 //! Sprachpakete gehen nicht durch diese Sperre: [`ServerState::members`]
 //! liest den unveraenderlichen Schnappschuss der Clientliste.
 
+mod boards;
 mod files;
 
 pub(crate) use files::{ImageRequest, UploadRequest};
@@ -23,6 +24,7 @@ use echo_storage::{ArchivedMessage, ChannelArchive, StorageError};
 use parking_lot::Mutex;
 
 use crate::archives::ArchiveSet;
+use crate::boards::BoardRegistry;
 use crate::channels::{ChannelRegistry, NewChannel};
 use crate::client::{Client, ClientLink, Frame, NewClient};
 use crate::clients::{ClientRegistry, Members};
@@ -97,6 +99,7 @@ struct Inner {
     transfers: TransferRegistry,
     /// Dateien, deren Inhalt gerade in ein anderes Archiv kopiert wird.
     relocating: HashSet<String>,
+    boards: BoardRegistry,
 }
 
 pub(crate) struct ServerState {
@@ -129,6 +132,12 @@ impl ServerState {
             .map(|c| c.id)
             .collect();
         archives.retire_orphans(&permanent);
+        let mut boards = BoardRegistry::default();
+        for channel in channels.all() {
+            for board in archives.channel(channel.id)?.boards()? {
+                boards.add(&board.id, channel.id);
+            }
+        }
         let files = FileStore::load(
             Arc::clone(&archives),
             incoming,
@@ -146,6 +155,7 @@ impl ServerState {
                 files,
                 transfers: TransferRegistry::default(),
                 relocating: HashSet::new(),
+                boards,
             }),
             members,
             log,
@@ -310,6 +320,7 @@ impl ServerState {
         if !inner.clients.remove(client.id()) {
             return;
         }
+        boards::leave_boards(&mut inner, client.id(), None);
         broadcast(
             &inner,
             &Message::ClientLeft {
@@ -876,6 +887,7 @@ fn join_locked(
 
     let previous = client.channel();
     inner.clients.move_to(client, channel_id);
+    boards::leave_boards(inner, client.id(), Some(channel_id));
     broadcast(
         inner,
         &Message::ClientMoved {
@@ -922,6 +934,7 @@ fn delete_recursive(inner: &mut Inner, channel_id: u64) {
     }
     inner.channels.remove(channel_id);
     inner.files.delete_channel(channel_id);
+    inner.boards.remove_channel(channel_id);
     inner.archives.retire_channel(channel_id, removed.permanent);
     broadcast(inner, &Message::ChannelRemoved { channel_id }, None);
 }

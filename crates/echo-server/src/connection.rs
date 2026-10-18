@@ -313,6 +313,20 @@ async fn control_loop(mut recv: quinn::RecvStream, state: &Arc<ServerState>, cli
 /// Antwort: ihr Ergebnis oder `Reply`.
 fn handle(state: &Arc<ServerState>, client: &Client, envelope: Envelope) {
     let id = envelope.request_id;
+    // Die Antwort (`BoardSnapshot`) und die Formen danach schickt der Zustand
+    // selbst, in dieser Reihenfolge.
+    if let Message::OpenBoard { board_id } = &envelope.message {
+        if let Err(error) = state.open_board(client, board_id, id) {
+            client.reply(
+                id,
+                Message::Reply {
+                    ok: false,
+                    error: Some(error),
+                },
+            );
+        }
+        return;
+    }
     let result = answer(state, client, envelope.message);
     match result {
         Ok(Some(answer)) => client.reply(id, answer),
@@ -386,6 +400,14 @@ fn answer(state: &Arc<ServerState>, client: &Client, message: Message) -> Answer
         | Message::RequestDownload { .. }
         | Message::RequestChatImage { .. }
         | Message::RequestImageDownload { .. }) => file_request(state, client, request),
+        request @ (Message::ListBoards { .. }
+        | Message::CreateBoard { .. }
+        | Message::RenameBoard { .. }
+        | Message::DeleteBoard { .. }
+        | Message::CloseBoard { .. }
+        | Message::JoinBoard { .. }
+        | Message::EditBoard { .. }
+        | Message::BoardPointer { .. }) => board_request(state, client, request),
         request @ (Message::JoinChannel { .. }
         | Message::CreateChannel { .. }
         | Message::EditChannel { .. }
@@ -466,6 +488,38 @@ fn moderation_request(state: &ServerState, client: &Client, message: Message) ->
             channel_id,
         } => done(state.move_client(client, client_id, channel_id)),
         Message::SetRole { fingerprint, role } => done(state.set_role(client, &fingerprint, role)),
+        _ => Err(UNKNOWN.into()),
+    }
+}
+
+/// Tafeln (echo-183).
+fn board_request(state: &ServerState, client: &Client, message: Message) -> Answer {
+    match message {
+        Message::ListBoards { channel } => state.list_boards(client, channel).map(Some),
+        Message::CreateBoard { channel, name } => done(state.create_board(client, channel, &name)),
+        Message::RenameBoard { board_id, name } => {
+            done(state.rename_board(client, &board_id, &name))
+        }
+        Message::DeleteBoard { board_id } => done(state.delete_board(client, &board_id)),
+        Message::CloseBoard { board_id } => {
+            state.close_board(client, &board_id);
+            Ok(None)
+        }
+        Message::JoinBoard { board_id, join } => done(state.join_board(client, &board_id, join)),
+        // Quittiert wie alles mit Id: ein Client, der eine Ablehnung nicht
+        // hoert, zeichnet weiter, was niemand sonst sieht.
+        Message::EditBoard { board_id, changes } => {
+            done(state.edit_board(client, &board_id, changes))
+        }
+        Message::BoardPointer {
+            board_id,
+            x,
+            y,
+            laser,
+        } => {
+            state.move_pointer(client, &board_id, x, y, laser);
+            Ok(None)
+        }
         _ => Err(UNKNOWN.into()),
     }
 }

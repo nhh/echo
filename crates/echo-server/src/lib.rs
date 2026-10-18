@@ -2,10 +2,11 @@
 //! Moderation, Sprache als Datagramm (SFU: der Server dekodiert nie).
 //! Daten und Konfiguration liegen in den sqlar-Archiven des C#-Vorgaengers.
 //!
-//! Kern (echo-232) sowie Dateien, Datenverbindung und Chatbilder (echo-235)
-//! stehen; Tafeln und Medien-Streams folgen.
+//! Kern (echo-232), Dateien, Datenverbindung und Chatbilder (echo-235) und
+//! Tafeln (echo-236) stehen; die Medien-Streams folgen.
 
 mod archives;
+mod boards;
 mod channels;
 mod client;
 mod clients;
