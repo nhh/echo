@@ -11,9 +11,11 @@ on:
 permissions:
   contents: read
 
+# Pull Requests: der neue Stand ersetzt den alten. Auf main laeuft jeder
+# Push zu Ende, sonst steht ein abgebrochener Lauf als Fehler in der Liste.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   CARGO_TERM_COLOR: always
