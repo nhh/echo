@@ -55,10 +55,10 @@ Was der Rust-Port von echo benutzt und warum (echo-224).
 | Resampling | `rubato` | |
 | Musik dekodieren | `symphonia` | mp3, aac, flac, ogg, wav, mp4, mkv |
 | AC-3, E-AC-3, DTS | eigener Port | aus `WowTs3.Core/Audio/Dolby` und `Dts` |
-| Video im Netz | `rav1e` (Encoder) + `rav1d` bzw. `rav1d-safe` (Decoder), beide ohne Feature `asm` | AV1 fuer Bildschirm und Film; Echtzeit mit `low_latency`, Geschwindigkeit erst messen (echo-227) |
-| H.264 aus Dateien | `rusty_h264` oder `rust_h264` (nur Decoder) | nur beim Sender, um mp4/mov/mkv zu lesen; ins Netz geht AV1 |
-| Videodateien | `mp4` bzw. `re_mp4`, `matroska-demuxer` | Ton daraus ueber symphonia und die eigenen Decoder |
-| NV12, Skalieren | `yuvutils-rs` oder wgpu-Compute | |
+| Video im Netz | `rav1e` 0.8 (Encoder, nur `threading`) + `rav1d` 1.1 (Decoder, nur `bitdepth_8`, ueber seine `dav1d_*`-Funktionen mit eigenem safe Wrapper) | AV1, gemessen in echo-227: Bildschirm 1080p mit 15–20 fps als Standard, 720p30 fuer Bewegtes; ~133 ms feste Verzoegerung in rav1e (echo-233). Nicht `rav1d-safe` (AGPL) |
+| H.264 aus Dateien | `rusty_h264` (nur Decoder, `default-features = false`) | bit-genau zu ffmpeg, bis 180 fps bei 1080p. Ohne `global-alloc`, das bremst rav1e um 30–45 %. Film geht als 720p24 ins Netz; 1080p schafft rav1e nicht in Echtzeit |
+| Videodateien | `mp4`, `matroska-demuxer` | Bildrate aus Timescale und Sample-Dauern rechnen, `frame_rate()` rundet falsch; Ton ueber symphonia und die eigenen Decoder |
+| YUV, Skalieren | `yuvutils-rs` | reines Rust, BGRA → I420 bei 1080p in 1 ms |
 | Bildschirmaufnahme | `windows-capture` | Windows Graphics Capture in reinem Rust: Bildschirm, einzelne Fenster, Mauszeiger. Linux/macOS offen (echo-230) |
 | SQLite, sqlar | `turso_core` ohne Default-Features (`fs`, `json`, `time`, `uuid`, `pure-rust-crypto`), `flate2` mit `miniz_oxide` | SQLite neu in Rust, gleiches Dateiformat, siehe unten |
 | JSON | `serde_json` | Einstellungen des Servers und Formen der Tafeln liegen als JSON in den Archiven |
