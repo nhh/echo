@@ -41,4 +41,8 @@ pub enum StorageError {
 
     #[error("abgebrochen")]
     Canceled,
+
+    /// Eine neuere echo-Version hat die Datei geschrieben; lieber nicht anfassen.
+    #[error("{path} stammt von einer neueren echo-Version (Schema {version})")]
+    NewerSchema { path: PathBuf, version: i64 },
 }

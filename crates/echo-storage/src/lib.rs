@@ -5,12 +5,17 @@
 //! Kennt weder Netz noch UI.
 
 mod archive_keys;
+mod channel;
 mod content;
 mod database;
 mod error;
 mod sqlar;
 
 pub use archive_keys::{file_key, fingerprint};
+pub use channel::{
+    ArchivedBoard, ArchivedFile, ArchivedImage, ArchivedMessage, ArchivedShape, ChannelArchive,
+    is_valid_id,
+};
 pub use content::ContentReader;
 pub use database::{Connection, Database, Row, Value, param};
 pub use error::StorageError;
