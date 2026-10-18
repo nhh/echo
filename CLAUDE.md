@@ -12,6 +12,10 @@ idiomatischem Rust neu gebaut.
 - Erst diese Datei und `README.md` lesen, dann den betroffenen Crate.
 - Bei Fragen zum gewollten Verhalten im C#-Code nachsehen
   (`../wowts3/src/...`), nicht raten. `../wowts3` wird nicht veraendert.
+- Fuer Fenster, wgpu, 2D-Zeichnen, Text und Widgets ist `../picasso.net`
+  das Vorbild (`crates/picasso-gfx`, `crates/picasso-ui`,
+  `crates/picasso/src/host`): dort ist derselbe Weg in Rust schon gegangen.
+  Auch `../picasso.net` wird von hier aus nicht veraendert.
 - Jede Aenderung endet mit:
   ```
   cargo fmt --all --check
@@ -82,8 +86,12 @@ idiomatischem Rust neu gebaut.
   `-D warnings`; Abweichungen stehen in `[workspace.lints]` mit Begruendung.
 - Edition 2024, die Toolchain steht in `rust-toolchain.toml`.
 - Abhaengigkeiten nur ueber `[workspace.dependencies]`; jede neue Crate
-  braucht einen Grund im Commit-Body. Kein Crate, das zur Laufzeit eine DLL
-  nachlaedt oder ffmpeg braucht: die Exe bleibt eine Datei.
+  braucht einen Grund im Commit-Body.
+- **Reines Rust.** Kein C, C++ oder Assembler im Build: kein Crate, das
+  `cc`, `cmake` oder `bindgen` braucht, kein `ring`, kein `aws-lc-rs`, kein
+  `-sys`-Crate mit mitgebrachten Quellen. Betriebssystem-APIs ueber das
+  `windows`-Crate sind erlaubt. CI prueft das mit `cargo tree`. Keine DLL
+  wird mitgeliefert oder nachgeladen: die Exe bleibt eine Datei.
 - Code und Bezeichner Englisch, Kommentare und UI-Texte Deutsch
   (ae/oe/ue/ss in Kommentaren, echte Umlaute in UI-Texten).
 
