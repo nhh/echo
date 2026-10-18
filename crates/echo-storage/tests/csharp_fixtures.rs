@@ -63,7 +63,7 @@ fn int(value: &Value) -> i64 {
 }
 
 fn single(db: &Database, sql: &str) -> Value {
-    db.query(sql, &[]).unwrap().remove(0).remove(0)
+    db.query(sql, &[]).unwrap()[0][0].clone()
 }
 
 #[test]
@@ -205,4 +205,31 @@ fn reports_sql_errors_as_values() {
     let db = fixtures.open("archives/server.sqlar");
 
     assert!(db.query("SELECT * FROM gibt_es_nicht", &[]).is_err());
+}
+
+#[test]
+fn sqlar_archive_reads_what_the_csharp_server_stored() {
+    let fixtures = Fixtures::copy();
+    let archive =
+        echo_storage::SqlarArchive::open(&fixtures.root.join("archives/channels/1.sqlar")).unwrap();
+
+    let file = archive.read_all("files/file01").unwrap().unwrap();
+    assert_eq!(file.len(), 100_000);
+    assert!(
+        file.iter()
+            .enumerate()
+            .all(|(i, b)| u64::from(*b) == (i as u64 * 31) % 256)
+    );
+    assert_eq!(
+        &archive.read_all("images/img01").unwrap().unwrap()[1..4],
+        b"PNG"
+    );
+
+    archive
+        .put_bytes("files/rust01", b"aus Rust", 1_760_000_000)
+        .unwrap();
+    assert_eq!(
+        archive.read_all("files/rust01").unwrap().unwrap(),
+        b"aus Rust"
+    );
 }
