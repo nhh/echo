@@ -75,6 +75,12 @@ using (var server = new ChannelArchive(Path.Combine(target, "tmp-server.sqlar"))
 }
 foreach (var f in Directory.GetFiles(target, "tmp-server.sqlar*")) File.Delete(f);
 
+// Das Zertifikat des Servers als PEM, dazu sein Fingerabdruck: der
+// Rust-Server muss es laden und denselben Fingerabdruck zeigen (echo-225).
+var hostDir = Path.Combine(target, "host");
+using (var host = HostCertificate.LoadOrCreate(Path.Combine(hostDir, "host.crt"), Path.Combine(hostDir, "host.key"), "Testserver"))
+    File.WriteAllText(Path.Combine(hostDir, "fingerprint.txt"), HostCertificate.FingerprintOf(host));
+
 // Ein Archiv, das nicht sauber geschlossen wurde: Datei und -wal kopieren,
 // waehrend die Verbindung noch offen ist (wie nach einem Absturz).
 var crashDir = Path.Combine(target, "crash");
