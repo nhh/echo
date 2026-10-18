@@ -62,7 +62,7 @@ cargo deny check
 | `echo-storage` | SQLite ueber turso: sqlar-Archive und Kanalarchiv kompatibel zum .NET-Server, `client.sqlite` | steht |
 | `echo-quic` | QUIC mit Datagrammen ueber quinn, TLS-Provider in reinem Rust, Zertifikat des Servers | steht |
 | `echo-protocol` | Nachrichten, Framing, Sprachframe, Identitaet, Rechte. Keine IO | steht |
-| `echo-core` | Session, Jitter-Puffer, Mixer, Sprachaktivierung, Decoder, Tafel | geplant |
+| `echo-core` | Session zum Server, Serverbaum als Schnappschuss, Chat mit Spiegel und Verlauf; spaeter Jitter-Puffer, Mixer, Sprachaktivierung, Tafel | Session und Chat stehen; Audio folgt |
 | `echo-media` | Codecs und Demuxer in Rust, Audio-Geraete, Bildschirmaufnahme | geplant |
 | `echo-ui` | Immediate-Mode-Widgets in Fluent 2 auf vello | geplant |
 | `echo-client` | Die Exe: Fenster, Screens, `--shot`, `--selftest` | geplant |

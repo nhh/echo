@@ -17,6 +17,7 @@ echo-storage = { path = "crates/echo-storage" }
 echo-quic = { path = "crates/echo-quic" }
 echo-protocol = { path = "crates/echo-protocol" }
 echo-server = { path = "crates/echo-server" }
+echo-core = { path = "crates/echo-core" }
 
 base64 = "0.22"
 bytes = "1"

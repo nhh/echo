@@ -665,6 +665,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "echo-core"
+version = "0.1.0"
+dependencies = [
+ "arc-swap",
+ "bytes",
+ "echo-protocol",
+ "echo-quic",
+ "echo-server",
+ "echo-storage",
+ "parking_lot",
+ "quinn",
+ "tempfile",
+ "thiserror",
+ "tokio",
+ "tokio-util",
+]
+
+[[package]]
 name = "echo-protocol"
 version = "0.1.0"
 dependencies = [
