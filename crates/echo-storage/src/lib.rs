@@ -1,7 +1,6 @@
-//! Speicher von echo: sqlar-Archive des Servers und (spaeter) die
-//! JSONL-Dateien des Clients. Die Formate auf der Platte sind die des
+//! Speicher von echo: die sqlar-Archive des Servers, im Format des
 //! C#-Vorgaengers, damit ein umgestellter Server seine Daten behaelt
-//! (README, Abschnitt „turso und die sqlar-Archive“).
+//! (`docs/storage.md`), und die SQLite-Datei des Clients.
 //!
 //! Kennt weder Netz noch UI.
 

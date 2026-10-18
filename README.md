@@ -57,7 +57,7 @@ cargo deny check
 
 | Crate | Inhalt | Stand |
 |---|---|---|
-| `echo-storage` | sqlar-Archive und JSONL, kompatibel zum .NET-Server | begonnen |
+| `echo-storage` | SQLite: sqlar-Archive kompatibel zum .NET-Server, Datei des Clients | begonnen |
 | `echo-quic` | QUIC mit Datagrammen ueber quinn, TLS-Provider in reinem Rust, Zertifikat des Servers | steht |
 | `echo-protocol` | Nachrichten, Framing, Sprachframe, Identitaet, Zertifikat. Keine IO | geplant |
 | `echo-core` | Session, Jitter-Puffer, Mixer, Sprachaktivierung, Decoder, Tafel | geplant |

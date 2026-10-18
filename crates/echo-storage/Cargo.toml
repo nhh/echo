@@ -1,6 +1,6 @@
 [package]
 name = "echo-storage"
-description = "sqlar-Archive und JSONL-Dateien von echo, lesbar wie beim C#-Vorgaenger"
+description = "SQLite-Speicher von echo: sqlar-Archive des Servers, lesbar wie beim C#-Vorgaenger, und die Datei des Clients"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true

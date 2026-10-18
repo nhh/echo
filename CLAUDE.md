@@ -107,13 +107,15 @@ idiomatischem Rust neu gebaut.
   `WIRE_VERSION`. Der Versionsvergleich passiert im Handshake, damit der
   Nutzer einen lesbaren Grund bekommt; die ALPN-Kennung bleibt versionslos.
 - Server und Client werden zusammen ausgeliefert.
-- **Die Datenformate auf der Platte sind nicht frei.** `.sqlar`-Archive des
-  Servers und JSONL-Dateien des Clients bleiben mit dem C#-Vorgaenger
-  kompatibel (Tabellen, Spalten, Dateinamen, Zeitformate, JSON in camelCase,
+- **Die Datenformate auf der Platte sind nicht frei.** Die `.sqlar`-Archive
+  des Servers bleiben mit dem C#-Vorgaenger kompatibel (Tabellen, Spalten, Dateinamen, Zeitformate, JSON in camelCase,
   Enums als Text; Einzelheiten in `docs/techstack.md` und `docs/storage.md`). `tests/fixtures/csharp`
   enthaelt Archive des C#-Servers; jede Aenderung am Storage wird dagegen
   getestet. Eine Aenderung daran braucht ein Ticket, eine
   Migration und `BREAKING CHANGE:`.
+- **Kein JSONL.** Der Client speichert Einstellungen, Favoriten und
+  `known_hosts` in einer SQLite-Datei (`client.sqlite`, turso); die
+  JSONL-Dateien des C#-Clients werden nicht gelesen.
 
 ## 7. Conventional Commits
 

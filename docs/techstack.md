@@ -14,9 +14,12 @@ Was der Rust-Port von echo benutzt und warum (echo-224).
   Dateinamen (`ArchiveKeys`), gleiche Zeitformate (Nachrichten, Dateien und
   Tafeln in Unix-Millisekunden, `sqlar.mtime` in Unix-Sekunden, die
   Server-Tabellen `members`, `bans`, `approvals` und `events` in .NET-Ticks
-  UTC), JSON in camelCase mit Enums als Text. Dasselbe gilt fuer die JSONL-Dateien des
-  Clients unter `%AppData%\echo`. Geprueft wird das mit Archiven aus dem
-  C#-Server als Testdaten.
+  UTC), JSON in camelCase mit Enums als Text. Geprueft wird das mit
+  Archiven aus dem C#-Server als Testdaten.
+- **Kein JSONL.** Der Client legt Einstellungen, Favoriten und `known_hosts`
+  in `%AppData%\echo\client.sqlite` ab, ueber turso wie der Server. Die
+  JSONL-Dateien des C#-Clients werden nicht eingelesen; Favoriten und
+  gemerkte Server legt man einmal neu an.
 - **Opus in reinem Rust** hinter dem Trait `VoiceCodec`, damit das Crate
   tauschbar bleibt; libopus nur als Rueckfall.
 - **Zeichnen ueber wgpu** nach dem Vorbild von picasso.net, einem anderen
@@ -58,7 +61,7 @@ Was der Rust-Port von echo benutzt und warum (echo-224).
 | NV12, Skalieren | `yuvutils-rs` oder wgpu-Compute | |
 | Bildschirmaufnahme | `windows-capture` | Windows Graphics Capture in reinem Rust: Bildschirm, einzelne Fenster, Mauszeiger. Linux/macOS offen (echo-230) |
 | SQLite, sqlar | `turso_core` ohne Default-Features (`fs`, `json`, `time`, `uuid`, `pure-rust-crypto`), `flate2` mit `miniz_oxide` | SQLite neu in Rust, gleiches Dateiformat, siehe unten |
-| JSON, JSONL | `serde_json` | |
+| JSON | `serde_json` | Einstellungen des Servers und Formen der Tafeln liegen als JSON in den Archiven |
 | Fenster | `winit` 0.30 | Hauptfenster, Toast, Randleiste, Vollbild; Host wie in picasso.net |
 | GPU | `wgpu` ueber `vello` 0.10 | D3D12 unter Windows |
 | 2D-Zeichnen | `vello`, `vello_cpu`, `kurbo`, `peniko` | Zeichenliste mit zwei Backends wie `picasso-gfx`; `--shot` ueber `vello_cpu` |
