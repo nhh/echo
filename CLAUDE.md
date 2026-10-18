@@ -130,7 +130,7 @@ Refs: echo-<n>
 **Typen** (nur diese): `feat`, `fix`, `refactor`, `perf`, `test`, `docs`,
 `build`, `ci`, `chore`, `style`.
 
-**Bereiche** (optional): `protocol`, `storage`, `core`, `audio`, `video`,
+**Bereiche** (optional): `protocol`, `quic`, `storage`, `core`, `audio`, `video`,
 `session`, `server`, `ui`, `client`, `board`, `build`, `ci`, `deps`.
 
 - **Jeder Commit nennt sein Ticket im Footer: `Refs: echo-<n>`**, auch

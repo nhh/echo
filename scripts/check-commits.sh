@@ -6,7 +6,7 @@ set -euo pipefail
 
 range="${1:-origin/main..HEAD}"
 types='feat|fix|refactor|perf|test|docs|build|ci|chore|style'
-scopes='protocol|storage|core|audio|video|session|server|ui|client|board|build|ci|deps'
+scopes='protocol|quic|storage|core|audio|video|session|server|ui|client|board|build|ci|deps'
 header_pattern="^(${types})(\((${scopes})\))?!?: [a-z0-9\`].{0,69}[^.]$"
 # Tickets im YouTrack-Projekt echo; Beitraege von aussen nennen ihr GitHub-Issue.
 refs_pattern='^Refs: (echo-[0-9]+|#[0-9]+)(, (echo-[0-9]+|#[0-9]+))*$'
