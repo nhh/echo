@@ -98,3 +98,43 @@ wenn ein Codec in reinem Rust die Faelle oben schafft oder die Regel fuer
 Video anders entschieden wird. H.265 ist keine Abkuerzung: in Rust gibt es
 reife Decoder (`rusty_h265`, `rust_h265`), aber keinen brauchbaren Encoder.
 
+
+## H.264 und Kacheln: Messung (echo-234)
+
+Gleiche Maschine, `--release` mit fat LTO. rusty_h264 0.16.1 mit
+`default-features=false` und `std` + `asm` (Rust-SIMD, kein C, kein
+Assembler), Konfiguration ab `EncoderConfig::baseline()`, ABR. Der Encoder
+liefert jedes Paket sofort: Latenz = Encodezeit.
+
+| Fall (ein Kern) | fps | Encode je Frame | Bitrate |
+|---|---|---|---|
+| Bildschirm 720p, Baseline Fast | 107 | 9 ms | 1,3–2,3 Mbit/s |
+| Bildschirm 1080p, Baseline Fast | 47 | 21 ms | 1,9–2,9 Mbit/s |
+| Bildschirm 1080p, Main (CABAC) Fast | 31–37 | 27–32 ms | 0,9–2,1 Mbit/s, an der Grenze |
+| Bildschirm 1440p, Baseline Fast | 28 | 35 ms | **nicht in Echtzeit** |
+| Film 1080p24, Main Fast, 5 Mbit/s | 30 | 28 ms | haelt |
+| Film 720p24, Main Fast, 3 Mbit/s | 52 | 14 ms | mit Reserve |
+| Dekodieren (rusty_h264) | 230–940 | 1–4 ms | |
+
+Verlustfreie Kacheln (64 px, QOI + lz4_flex, Scroll-Erkennung ueber
+Zeilen-Hashes), 1080p, ein Thread:
+
+| Inhalt | Encode | Decode | Bitrate bei 30 fps |
+|---|---|---|---|
+| statisch | 1,4 ms | 0,05 ms | 0 |
+| Tippen | 1,4 ms | 0,07 ms | 0,3 Mbit/s |
+| Scrollen | 1,8 ms | 1,6 ms | 3,6 Mbit/s (ohne Scroll-Erkennung 27) |
+| Video 640x360 im Fenster | 3,2 ms | 1,2 ms | 74 Mbit/s |
+
+Der Testtext hatte kein ClearType und scrollte pixelgenau; echte
+Bildschirme brauchen geschaetzt das Zwei- bis Dreifache.
+
+Fallen: der Streaming-Encoder ist einstraengig (ein Kern je Strom, 1440p30
+geht nicht); `EncoderConfig::new()` puffert (Lookahead, mb-tree) und liest
+Umgebungsvariablen; IDR-Frames sind bei 1080p 235–260 KB; `global-alloc`
+muss aus sein. `ruzstd` kann nur die schwaechste Stufe und taugt nicht.
+
+**Empfehlung:** Bildschirm als Hybrid — verlustfreie Kacheln als Basis,
+dauernd wechselnde Bereiche (Video, Animation) als Rechteck mit rusty_h264
+Main Fast. Film mit rusty_h264 Main Fast, 1080p24 bei 5 Mbit/s. Beides in
+reinem Rust und ohne die Verzoegerung von rav1e.
