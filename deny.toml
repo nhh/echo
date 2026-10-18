@@ -38,6 +38,8 @@ unused-allowed-license = "allow"
 [bans]
 multiple-versions = "warn"
 wildcards = "deny"
+# Pfade zwischen den eigenen, unveroeffentlichten Crates sind keine Wildcards.
+allow-wildcard-paths = true
 # Reines Rust: nichts, was C, C++ oder Assembler baut oder mitbringt.
 deny = [
   { crate = "ring", reason = "C und Assembler; echo-quic bringt den Provider mit" },

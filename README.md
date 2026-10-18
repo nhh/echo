@@ -65,7 +65,7 @@ cargo deny check
 | `echo-media` | Codecs und Demuxer in Rust, Audio-Geraete, Bildschirmaufnahme | geplant |
 | `echo-ui` | Immediate-Mode-Widgets in Fluent 2 auf vello | geplant |
 | `echo-client` | Die Exe: Fenster, Screens, `--shot`, `--selftest` | geplant |
-| `echo-server` | QUIC-Listener, Serverzustand, SFU, Archive | geplant |
+| `echo-server` | QUIC, Serverzustand, Chat, Moderation, Sprache als Datagramm (SFU), Archive des .NET-Servers | Kern steht; Dateien, Tafeln, Medien folgen |
 
 Mehr dazu:
 
