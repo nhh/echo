@@ -53,7 +53,7 @@ Die Regeln fuer Code, Tests und Commits stehen in [CLAUDE.md](CLAUDE.md).
 | Videodateien | `mp4` bzw. `re_mp4`, `matroska-demuxer` | Ton daraus ueber symphonia und die eigenen Decoder |
 | NV12, Skalieren | `yuvutils-rs` oder wgpu-Compute | |
 | Bildschirmaufnahme | `windows` (DXGI Desktop Duplication) | einziger Video-Teil am Betriebssystem |
-| SQLite, sqlar | `turso` (SQLite neu in Rust, Beta), `flate2` mit `miniz_oxide` | Dateiformat von SQLite; erst Spike gegen C#-Archive |
+| SQLite, sqlar | `turso`, `flate2` mit `miniz_oxide` | SQLite neu in Rust, gleiches Dateiformat; Tests gegen C#-Archive (echo-226) |
 | JSON, JSONL | `serde_json` | |
 | Fenster | `winit` 0.30 | Hauptfenster, Toast, Randleiste, Vollbild; Host wie in picasso.net |
 | GPU | `wgpu` ueber `vello` 0.10 | D3D12 unter Windows |
